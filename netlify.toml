@@ -1,0 +1,15 @@
+[[redirects]]
+  from = "/dat-hang"
+  to = "/dat-hang.html"
+  status = 200
+
+[[redirects]]
+  from = "/quan-ly"
+  to = "/quan-ly.html"
+  status = 200
+
+[[redirects]]
+  from = "/5S_SMART_ORDER_DAT_HANG_DIEN_THOAI.html"
+  to = "/dat-hang"
+  status = 301
+  force = true

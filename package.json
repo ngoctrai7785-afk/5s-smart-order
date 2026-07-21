@@ -1,0 +1,8 @@
+{
+  "name": "5s-smart-order",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "*"
+  }
+}

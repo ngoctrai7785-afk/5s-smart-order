@@ -1,47 +1,24 @@
-import { getStore } from "@netlify/blobs";
-
-const headers = {"content-type":"application/json; charset=utf-8", "cache-control":"no-store"};
-const reply = (data, status=200) => new Response(JSON.stringify(data), {status, headers});
-
-export default async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, {status: 204, headers});
-
-  const store = getStore({name:"5s-smart-order", consistency:"strong"});
-  const key = "shared-data-v1";
-  let data = await store.get(key, {type:"json", consistency:"strong"});
-  if (!data) data = {orders:[], customers:[]};
-
-  if (req.method === "GET") return reply(data);
-  if (req.method !== "POST") return reply({error:"Method not allowed"}, 405);
-
-  try {
-    const body = await req.json();
-    if (body.action === "createOrder") {
-      const order = body.order;
-      const customer = body.customer;
-      if (!order?.id || !customer?.id) return reply({error:"Thiếu dữ liệu đơn hàng"}, 400);
-      data.orders = (data.orders || []).filter(x => x.id !== order.id);
-      data.orders.unshift(order);
-      data.customers = data.customers || [];
-      const i = data.customers.findIndex(x => x.id === customer.id || (customer.phone && x.phone === customer.phone));
-      if (i >= 0) data.customers[i] = {...data.customers[i], ...customer};
-      else data.customers.unshift(customer);
-    } else if (body.action === "updateOrder") {
-      const i = (data.orders || []).findIndex(x => x.id === body.id);
-      if (i < 0) return reply({error:"Không tìm thấy đơn"}, 404);
-      data.orders[i] = {...data.orders[i], ...body.patch};
-    } else if (body.action === "updateCustomer") {
-      const i = (data.customers || []).findIndex(x => x.id === body.id);
-      if (i < 0) return reply({error:"Không tìm thấy khách"}, 404);
-      data.customers[i] = {...data.customers[i], ...body.patch};
-    } else {
-      return reply({error:"Thao tác không hợp lệ"}, 400);
-    }
-    await store.setJSON(key, data);
-    return reply({ok:true, ...data});
-  } catch (error) {
-    return reply({error:error?.message || "Lỗi máy chủ"}, 500);
-  }
-};
-
-export const config = { path: "/api/orders" };
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#0b4fae">
+<title>5S Smart Order</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(145deg,#eef5ff,#f8fafc);color:#0f172a;display:grid;place-items:center;padding:20px}.box{width:100%;max-width:460px;background:#fff;border:1px solid #dbe5f2;border-radius:24px;padding:28px;box-shadow:0 18px 50px #0f172a1a;text-align:center}.logo{font-size:46px;font-weight:1000;color:#1261d8;line-height:1}.logo small{display:block;font-size:12px;letter-spacing:2px;color:#06346f;margin-top:5px}h1{font-size:24px;margin:20px 0 8px}p{color:#64748b;line-height:1.5;margin:0 0 24px}.buttons{display:grid;gap:14px}.btn{display:block;text-decoration:none;border-radius:16px;padding:17px 16px;font-size:18px;font-weight:900}.order{background:linear-gradient(90deg,#1261d8,#0846b4);color:#fff}.manager{background:#edf5ff;color:#0846b4;border:1px solid #9fc1f3}.note{margin-top:20px;font-size:12px;color:#94a3b8}
+</style>
+</head>
+<body>
+<main class="box">
+  <div class="logo">5S<small>SMART ORDER</small></div>
+  <h1>Chọn giao diện sử dụng</h1>
+  <p>Khách hàng dùng trang Đặt hàng. Nhà phân phối dùng trang Quản lý.</p>
+  <div class="buttons">
+    <a class="btn order" href="dat-hang.html">🛒 Mở trang Đặt hàng</a>
+    <a class="btn manager" href="quan-ly.html">💻 Mở trang Quản lý</a>
+  </div>
+  <div class="note">5S Smart Order – Hệ thống đặt hàng và quản lý</div>
+</main>
+</body>
+</html>

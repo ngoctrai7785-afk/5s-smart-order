@@ -1,5 +1,14 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
 [[redirects]]
   from = "/dat-hang"
+  to = "/dat-hang.html"
+  status = 200
+
+[[redirects]]
+  from = "/dat-hang/"
   to = "/dat-hang.html"
   status = 200
 
@@ -9,7 +18,30 @@
   status = 200
 
 [[redirects]]
+  from = "/quan-ly/"
+  to = "/quan-ly.html"
+  status = 200
+
+[[redirects]]
   from = "/5S_SMART_ORDER_DAT_HANG_DIEN_THOAI.html"
   to = "/dat-hang"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/5S_SMART_ORDER_DAT_HANG_DIEN_THOAI"
+  to = "/dat-hang"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/5S_SMART_ORDER_DAT_HANG.html"
+  to = "/dat-hang"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/5S_SMART_ORDER_QUAN_LY.html"
+  to = "/quan-ly"
   status = 301
   force = true

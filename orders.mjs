@@ -4,6 +4,8 @@ const headers = {"content-type":"application/json; charset=utf-8", "cache-contro
 const reply = (data, status=200) => new Response(JSON.stringify(data), {status, headers});
 
 export default async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, {status: 204, headers});
+
   const store = getStore({name:"5s-smart-order", consistency:"strong"});
   const key = "shared-data-v1";
   let data = await store.get(key, {type:"json", consistency:"strong"});

@@ -778,7 +778,67 @@ function invoiceHTML(o,forExcel=false){
 .product{align-items:flex-start}.productActions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:92px}.colorPicker{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:104px}.colorDot{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #cbd5e1;position:relative;padding:0}.colorDot.active{box-shadow:0 0 0 3px #1261d8}.colorDot.active:after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:1000;color:#fff;text-shadow:0 1px 2px #000}.colorLabel{font-size:10px;color:#64748b;font-weight:800;text-align:right;max-width:100px}.adminColorList{display:flex;gap:6px;flex-wrap:wrap}.adminColorChip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid #dbe3ee;border-radius:999px;background:#fff;font-size:11px;font-weight:800}.adminColorChip i{width:15px;height:15px;border-radius:50%;border:1px solid #cbd5e1}.installHint{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px;line-height:1.55;color:#1e3a8a}.qrStatus{font-size:12px;color:#047857;font-weight:850;margin-top:8px}.shareActions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 
 .customerStatusMenu{position:relative;display:inline-block}.customerStatusMenu summary{list-style:none;border:0;background:#eef5ff;color:#1261d8;border-radius:8px;padding:8px 11px;font-weight:900;cursor:pointer;white-space:nowrap}.customerStatusMenu summary::-webkit-details-marker{display:none}.customerStatusMenu[open] summary{background:#1261d8;color:#fff}.customerStatusOptions{position:absolute;right:0;top:42px;z-index:2500;width:150px;background:#fff;border:1px solid var(--ln);border-radius:12px;padding:7px;box-shadow:0 16px 36px #0f172a2b}.customerStatusOptions button{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:8px;padding:10px;font-weight:850;color:#0f172a;margin:1px 0}.customerStatusOptions button:hover{background:#eef5ff;color:#1261d8}.customerStatusOptions .danger{color:#b91c1c}.customerStatusOptions .danger:hover{background:#fee2e2;color:#b91c1c}
-</style></head><body>${closePreview}<div class="invoice"><div class="head"><div class="brand"><b>${settings.distributor||'ĐIỆN MÁY 5S'}</b><div>Uy tín tạo niềm tin</div></div><div class="title"><h2>HÓA ĐƠN BÁN HÀNG</h2><div><b>Số:</b> ${o.id}</div><div><b>Ngày:</b> ${o.created}</div></div></div><div class="meta"><div><strong>Khách hàng:</strong> ${o.buyer}</div><div><strong>Số điện thoại:</strong> ${o.phone}</div><div><strong>Người nhận:</strong> ${o.receiver||o.buyer}</div><div><strong>Loại khách:</strong> ${o.tier==='vip'?'VIP':o.tier==='wholesale'?'Cửa hàng/Đại lý':'Khách lẻ'}</div><div style="grid-column:1/3"><strong>Địa chỉ:</strong> ${o.address}</div><div style="grid-column:1/3"><strong>Ghi chú:</strong> ${o.note||'Không có'}</div></div><table><thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>${rows}</tbody></table><div class="sum"><div><span>Tổng số lượng</span><b>${grouped.reduce((a,x)=>a+x.qty,0)}</b></div><div class="total"><span>TỔNG THANH TOÁN</span><span>${money(o.total)}</span></div></div><div class="sign"><div><b>Người mua hàng</b><span>(Ký và ghi rõ họ tên)</span></div><div><b>Người bán hàng</b><span>(Ký và ghi rõ họ tên)</span></div></div><div class="note">Cảm ơn quý khách đã đặt hàng tại 5S Smart Order!</div></div></body></html>`;
+</style></head><body>${closePreview}<div class="invoice"><div class="head"><div class="brand"><b>${settings.distributor||'ĐIỆN MÁY 5S'}</b><div>Uy tín tạo niềm tin</div></div><div class="title"><h2>HÓA ĐƠN BÁN HÀNG</h2><div><b>Số:</b> ${o.id}</div><div><b>Ngày:</b> ${o.created}</div></div></div><div class="meta"><div><strong>Khách hàng:</strong> ${o.buyer}</div><div><strong>Số điện thoại:</strong> ${o.phone}</div><div><strong>Người nhận:</strong> ${o.receiver||o.buyer}</div><div><strong>Loại khách:</strong> ${o.tier==='vip'?'VIP':o.tier==='wholesale'?'Cửa hàng/Đại lý':'Khách lẻ'}</div><div style="grid-column:1/3"><strong>Địa chỉ:</strong> ${o.address}</div><div style="grid-column:1/3"><strong>Ghi chú:</strong> ${o.note||'Không có'}</div></div><table><thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>${rows}</tbody></table><div class="sum"><div><span>Tổng số lượng</span><b>${grouped.reduce((a,x)=>a+x.qty,0)}</b></div><div class="total"><span>TỔNG THANH TOÁN</span><span>${money(o.total)}</span></div></div><div class="sign"><div><b>Người mua hàng</b><span>(Ký và ghi rõ họ tên)</span></div><div><b>Người bán hàng</b><span>(Ký và ghi rõ họ tên)</span></div></div><div class="note">Cảm ơn quý khách đã đặt hàng tại 5S Smart Order!</div></div>
+<style id="retailShareQuickV173Style">
+/* V173: NPP | Đơn hàng | Chia sẻ cho khách lẻ; Đại lý giữ NPP | Đơn hàng | Kinh doanh */
+.customerQuickRowV161{grid-template-columns:minmax(0,2.45fr) 94px 102px!important}
+.customerQuickActionWrapV161[hidden]{display:none!important}
+.customerQuickBtnV161.shareV173{background:#f5f9ff;border-color:#b9d2f5;color:#0b4fae}
+@media(max-width:700px){.customerQuickRowV161{grid-template-columns:minmax(0,2.2fr) 78px 84px!important}}
+</style>
+<script>
+/* V173: phục hồi Chia sẻ chỉ cho tài khoản khách lẻ */
+(function(){
+  function isDealerAccountV173(){
+    try{return !!(curCustomer&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip')&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
+  }
+  function isRetailAccountV173(){
+    try{return !!(curCustomer&&curCustomer.tier==='retail'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
+  }
+  function ensureRetailShareQuickV173(){
+    try{
+      if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161();
+      const row=document.getElementById('customerQuickRowV161');if(!row)return;
+      let btn=document.getElementById('retailShareQuickV173');
+      if(!btn){
+        const wrap=document.createElement('div');
+        wrap.id='retailShareWrapV173';
+        wrap.className='customerQuickActionWrapV161';
+        wrap.innerHTML='<button id="retailShareQuickV173" class="customerQuickBtnV161 shareV173" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
+        row.appendChild(wrap);
+        btn=document.getElementById('retailShareQuickV173');
+      }
+    }catch(e){}
+  }
+  function updateRetailShareQuickV173(){
+    ensureRetailShareQuickV173();
+    const dealer=isDealerAccountV173(),retail=isRetailAccountV173();
+    const biz=document.getElementById('dealerBizQuickV161');
+    const bizWrap=biz&&biz.parentElement;
+    const share=document.getElementById('retailShareQuickV173');
+    const shareWrap=document.getElementById('retailShareWrapV173');
+    const order=document.getElementById('dealerOrderQuickV161');
+    if(order)order.textContent='📦 Đơn hàng';
+    if(bizWrap)bizWrap.hidden=!dealer;
+    if(shareWrap)shareWrap.hidden=!retail;
+    if(share)share.hidden=!retail;
+    const label=document.querySelector('#nppPicker .nppSelectLabel');
+    if(label)label.textContent='LỰA CHỌN NPP/CUNG CẤP';
+  }
+  window.updateRetailShareQuickV173=updateRetailShareQuickV173;
+  try{
+    const baseRenderV173=renderCustomer;
+    renderCustomer=function(){
+      const r=baseRenderV173.apply(this,arguments);
+      requestAnimationFrame(updateRetailShareQuickV173);
+      return r;
+    };
+  }catch(e){}
+  setTimeout(updateRetailShareQuickV173,80);
+  setTimeout(updateRetailShareQuickV173,500);
+})();
+</script>
+</body></html>`;
 }
 function printOrder(id){let o=orders.find(x=>x.id===id);if(!o)return;let w=window.open('','_blank');if(!w)return toast('Trình duyệt đang chặn cửa sổ in');w.document.open();w.document.write(invoiceHTML(o));w.document.close();setTimeout(()=>{w.focus();w.print()},450)}
 function exportOrders(){

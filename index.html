@@ -1995,4 +1995,59 @@ setTimeout(()=>{try{renderDealerProductHhBadgesV166()}catch(e){}},350);
   setTimeout(renderHhV170,450);
 })();
 </script>
+
+<style id="retailShareQuickV174Style">
+.customerQuickRowV161{grid-template-columns:minmax(0,2.45fr) 94px 102px!important}
+.customerQuickActionWrapV161[hidden]{display:none!important}
+.customerQuickBtnV161.shareV174{background:#f5f9ff;border-color:#b9d2f5;color:#0b4fae}
+@media(max-width:700px){.customerQuickRowV161{grid-template-columns:minmax(0,2.2fr) 78px 84px!important}}
+</style>
+<script>
+/* V174 LIVE: nút Chia sẻ chỉ cho khách lẻ */
+(function(){
+  function dealerV174(){
+    try{return !!(curCustomer&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip')&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
+  }
+  function ensureV174(){
+    try{
+      if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161();
+      const row=document.getElementById('customerQuickRowV161');
+      if(!row)return;
+      let wrap=document.getElementById('retailShareWrapV174');
+      if(!wrap){
+        wrap=document.createElement('div');
+        wrap.id='retailShareWrapV174';
+        wrap.className='customerQuickActionWrapV161';
+        wrap.innerHTML='<button id="retailShareQuickV174" class="customerQuickBtnV161 shareV174" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
+        row.appendChild(wrap);
+      }
+    }catch(e){}
+  }
+  function refreshV174(){
+    ensureV174();
+    const dealer=dealerV174();
+    const biz=document.getElementById('dealerBizQuickV161');
+    const bizWrap=biz&&biz.parentElement;
+    const shareWrap=document.getElementById('retailShareWrapV174');
+    const share=document.getElementById('retailShareQuickV174');
+    const order=document.getElementById('dealerOrderQuickV161');
+    if(order)order.textContent='📦 Đơn hàng';
+    if(bizWrap)bizWrap.hidden=!dealer;
+    if(shareWrap)shareWrap.hidden=dealer;
+    if(share)share.hidden=dealer;
+  }
+  window.refreshRetailShareV174=refreshV174;
+  try{
+    const base=renderCustomer;
+    renderCustomer=function(){
+      const r=base.apply(this,arguments);
+      requestAnimationFrame(refreshV174);
+      return r;
+    };
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded',refreshV174);
+  setTimeout(refreshV174,100);
+  setTimeout(refreshV174,800);
+})();
+</script>
 </body></html>

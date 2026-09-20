@@ -294,7 +294,7 @@ async function hydratePublicCatalog(options={}){
 }
 async function sendOnlineOrder(order,customer){try{let r=await fetch(ORDERS_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({order,customer})}),j=await r.json().catch(()=>({}));return{ok:r.ok,code:j.code||'',error:j.error||''}}catch(e){return{ok:false,code:'NETWORK_ERROR',error:'Không kết nối được hệ thống'}}}function applyOrderAccountBlock(result){if(!curCustomer)return false;if(result.code==='ACCOUNT_DELETED'){curCustomer.status='deleted';curCustomer.active=false}else if(result.code==='ACCOUNT_HIDDEN'){curCustomer.active=false}else return false;let saved=customers.find(c=>c.id===curCustomer.id||c.phone===curCustomer.phone);if(saved)Object.assign(saved,curCustomer);cart={};cartDetails={};persist();closeM('checkoutModal');renderCustomer();return true}function focusProducts(){setTimeout(()=>{let list=$('customerProducts');if(list)list.scrollIntoView({behavior:'smooth',block:'start'})},180)}
 let lastCustomerRegisterError=null;
-async function registerCustomerOnline(customer){lastCustomerRegisterError=null;if(registrationMode==='new')customer.status='pending';for(let attempt=0;attempt<2;attempt++){let controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{let r=await fetch(CUSTOMERS_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'register',customer}),signal:controller.signal}),j=await r.json();clearTimeout(timer);if(!r.ok){lastCustomerRegisterError={status:r.status,message:j.error||'Chưa đăng ký được'};return false}if(j.customer)Object.assign(customer,j.customer);return true}catch(e){clearTimeout(timer);lastCustomerRegisterError={status:0,message:'Kết nối chưa ổn định'};if(attempt===0)await new Promise(resolve=>setTimeout(resolve,350))}}return false}
+async function registerCustomerOnline(customer){lastCustomerRegisterError=null;if(registrationMode==='new'){customer.status=(customer.linkRequest||String(customer.store||'').trim())?'pending':'approved';}for(let attempt=0;attempt<2;attempt++){let controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{let r=await fetch(CUSTOMERS_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'register',customer}),signal:controller.signal}),j=await r.json();clearTimeout(timer);if(!r.ok){lastCustomerRegisterError={status:r.status,message:j.error||'Chưa đăng ký được'};return false}if(j.customer)Object.assign(customer,j.customer);return true}catch(e){clearTimeout(timer);lastCustomerRegisterError={status:0,message:'Kết nối chưa ổn định'};if(attempt===0)await new Promise(resolve=>setTimeout(resolve,350))}}return false}
 async function refreshCurrentCustomerOnline(){let phone=localStorage.getItem('s5phone');if(!phone)return false;try{let r=await fetch(CUSTOMERS_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'lookup',phone})}),j=await r.json(),remote=j.customer;if(!remote)return false;let c=customers.find(x=>String(x.phone||'').trim()===String(phone).trim());if(!c){c={...remote,phone};customers.push(c)}else Object.assign(c,remote);curCustomer=c;nppHub.npp1=currentNppSnapshot();S(NPP_HUB_KEY,nppHub);if(!linkedNpps.includes('npp1'))linkedNpps.push('npp1');activeNppId='npp1';S(NPP_LINKED_KEY,linkedNpps);localStorage.setItem(NPP_ACTIVE_KEY,activeNppId);renderCustomer();return true}catch(e){return false}}
 function queueAdminSync(){if(!adminToken||serverHydrating||$('adminView').classList.contains('hidden'))return;clearTimeout(adminSyncTimer);adminSyncTimer=setTimeout(saveAdminOnline,450)}
 function saveAdminOnline(){if(!adminToken)return Promise.resolve(false);let token=adminToken,state=onlineSnapshot();adminPendingWrites++;let write=async()=>{try{let r=await fetch(ADMIN_API,{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+token},body:JSON.stringify({action:'save',state})});if(r.status===401){adminToken='';sessionStorage.removeItem('s5AdminToken');toast('Phiên quản lý đã hết hạn, vui lòng đăng nhập lại');return false}if(!r.ok)return false;lastAdminSaveAt=Date.now();return true}catch(e){toast('Chưa đồng bộ được dữ liệu, hệ thống sẽ thử lại');return false}finally{adminPendingWrites--}};adminSyncChain=adminSyncChain.then(write,write);return adminSyncChain}
@@ -588,7 +588,7 @@ bindAccountToInstallV99=function(phone){
   url.searchParams.set('installSetup','1');
   history.replaceState(null,'',url.pathname+'?'+url.searchParams.toString());
   let manifest=document.querySelector('link[rel="manifest"]');
-  if(manifest)manifest.href='/api/order-manifest?account='+encodeURIComponent(encoded)+'&v=140';
+  if(manifest)manifest.href='/api/order-manifest?tenant='+encodeURIComponent(ORDER_TENANT_ID)+'&unit='+encodeURIComponent(ORDER_CHILD_UNIT||settings?.distributor||'Ngọc Trai')+'&account='+encodeURIComponent(encoded)+'&v=174';
   /* Điều hướng thật sang URL có tài khoản để lệnh “Mở bằng Safari” của Zalo
      chuyển đúng phiên cài đặt, thay vì dùng lại link QR ban đầu. */
   setTimeout(()=>location.replace(url.pathname+'?'+url.searchParams.toString()),120);
@@ -779,65 +779,7 @@ function invoiceHTML(o,forExcel=false){
 
 .customerStatusMenu{position:relative;display:inline-block}.customerStatusMenu summary{list-style:none;border:0;background:#eef5ff;color:#1261d8;border-radius:8px;padding:8px 11px;font-weight:900;cursor:pointer;white-space:nowrap}.customerStatusMenu summary::-webkit-details-marker{display:none}.customerStatusMenu[open] summary{background:#1261d8;color:#fff}.customerStatusOptions{position:absolute;right:0;top:42px;z-index:2500;width:150px;background:#fff;border:1px solid var(--ln);border-radius:12px;padding:7px;box-shadow:0 16px 36px #0f172a2b}.customerStatusOptions button{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:8px;padding:10px;font-weight:850;color:#0f172a;margin:1px 0}.customerStatusOptions button:hover{background:#eef5ff;color:#1261d8}.customerStatusOptions .danger{color:#b91c1c}.customerStatusOptions .danger:hover{background:#fee2e2;color:#b91c1c}
 </style></head><body>${closePreview}<div class="invoice"><div class="head"><div class="brand"><b>${settings.distributor||'ĐIỆN MÁY 5S'}</b><div>Uy tín tạo niềm tin</div></div><div class="title"><h2>HÓA ĐƠN BÁN HÀNG</h2><div><b>Số:</b> ${o.id}</div><div><b>Ngày:</b> ${o.created}</div></div></div><div class="meta"><div><strong>Khách hàng:</strong> ${o.buyer}</div><div><strong>Số điện thoại:</strong> ${o.phone}</div><div><strong>Người nhận:</strong> ${o.receiver||o.buyer}</div><div><strong>Loại khách:</strong> ${o.tier==='vip'?'VIP':o.tier==='wholesale'?'Cửa hàng/Đại lý':'Khách lẻ'}</div><div style="grid-column:1/3"><strong>Địa chỉ:</strong> ${o.address}</div><div style="grid-column:1/3"><strong>Ghi chú:</strong> ${o.note||'Không có'}</div></div><table><thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>${rows}</tbody></table><div class="sum"><div><span>Tổng số lượng</span><b>${grouped.reduce((a,x)=>a+x.qty,0)}</b></div><div class="total"><span>TỔNG THANH TOÁN</span><span>${money(o.total)}</span></div></div><div class="sign"><div><b>Người mua hàng</b><span>(Ký và ghi rõ họ tên)</span></div><div><b>Người bán hàng</b><span>(Ký và ghi rõ họ tên)</span></div></div><div class="note">Cảm ơn quý khách đã đặt hàng tại 5S Smart Order!</div></div>
-<style id="retailShareQuickV173Style">
-/* V173: NPP | Đơn hàng | Chia sẻ cho khách lẻ; Đại lý giữ NPP | Đơn hàng | Kinh doanh */
-.customerQuickRowV161{grid-template-columns:minmax(0,2.45fr) 94px 102px!important}
-.customerQuickActionWrapV161[hidden]{display:none!important}
-.customerQuickBtnV161.shareV173{background:#f5f9ff;border-color:#b9d2f5;color:#0b4fae}
-@media(max-width:700px){.customerQuickRowV161{grid-template-columns:minmax(0,2.2fr) 78px 84px!important}}
-</style>
-<script>
-/* V173: phục hồi Chia sẻ chỉ cho tài khoản khách lẻ */
-(function(){
-  function isDealerAccountV173(){
-    try{return !!(curCustomer&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip')&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
-  }
-  function isRetailAccountV173(){
-    try{return !!(curCustomer&&curCustomer.tier==='retail'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
-  }
-  function ensureRetailShareQuickV173(){
-    try{
-      if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161();
-      const row=document.getElementById('customerQuickRowV161');if(!row)return;
-      let btn=document.getElementById('retailShareQuickV173');
-      if(!btn){
-        const wrap=document.createElement('div');
-        wrap.id='retailShareWrapV173';
-        wrap.className='customerQuickActionWrapV161';
-        wrap.innerHTML='<button id="retailShareQuickV173" class="customerQuickBtnV161 shareV173" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
-        row.appendChild(wrap);
-        btn=document.getElementById('retailShareQuickV173');
-      }
-    }catch(e){}
-  }
-  function updateRetailShareQuickV173(){
-    ensureRetailShareQuickV173();
-    const dealer=isDealerAccountV173(),retail=isRetailAccountV173();
-    const biz=document.getElementById('dealerBizQuickV161');
-    const bizWrap=biz&&biz.parentElement;
-    const share=document.getElementById('retailShareQuickV173');
-    const shareWrap=document.getElementById('retailShareWrapV173');
-    const order=document.getElementById('dealerOrderQuickV161');
-    if(order)order.textContent='📦 Đơn hàng';
-    if(bizWrap)bizWrap.hidden=!dealer;
-    if(shareWrap)shareWrap.hidden=!retail;
-    if(share)share.hidden=!retail;
-    const label=document.querySelector('#nppPicker .nppSelectLabel');
-    if(label)label.textContent='LỰA CHỌN NPP/CUNG CẤP';
-  }
-  window.updateRetailShareQuickV173=updateRetailShareQuickV173;
-  try{
-    const baseRenderV173=renderCustomer;
-    renderCustomer=function(){
-      const r=baseRenderV173.apply(this,arguments);
-      requestAnimationFrame(updateRetailShareQuickV173);
-      return r;
-    };
-  }catch(e){}
-  setTimeout(updateRetailShareQuickV173,80);
-  setTimeout(updateRetailShareQuickV173,500);
-})();
-</script>
+
 </body></html>`;
 }
 function printOrder(id){let o=orders.find(x=>x.id===id);if(!o)return;let w=window.open('','_blank');if(!w)return toast('Trình duyệt đang chặn cửa sổ in');w.document.open();w.document.write(invoiceHTML(o));w.document.close();setTimeout(()=>{w.focus();w.print()},450)}
@@ -2003,51 +1945,58 @@ setTimeout(()=>{try{renderDealerProductHhBadgesV166()}catch(e){}},350);
 @media(max-width:700px){.customerQuickRowV161{grid-template-columns:minmax(0,2.2fr) 78px 84px!important}}
 </style>
 <script>
-/* V174 LIVE: nút Chia sẻ chỉ cho khách lẻ */
+/* V174 LIVE: Khách lẻ có tài khoản = NPP | Đơn hàng | Chia sẻ. Đại lý = NPP | Đơn hàng | Kinh doanh. */
 (function(){
-  function dealerV174(){
-    try{return !!(curCustomer&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip')&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
-  }
-  function ensureV174(){
-    try{
-      if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161();
-      const row=document.getElementById('customerQuickRowV161');
-      if(!row)return;
-      let wrap=document.getElementById('retailShareWrapV174');
-      if(!wrap){
-        wrap=document.createElement('div');
-        wrap.id='retailShareWrapV174';
-        wrap.className='customerQuickActionWrapV161';
-        wrap.innerHTML='<button id="retailShareQuickV174" class="customerQuickBtnV161 shareV174" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
-        row.appendChild(wrap);
-      }
-    }catch(e){}
-  }
-  function refreshV174(){
-    ensureV174();
-    const dealer=dealerV174();
-    const biz=document.getElementById('dealerBizQuickV161');
-    const bizWrap=biz&&biz.parentElement;
-    const shareWrap=document.getElementById('retailShareWrapV174');
-    const share=document.getElementById('retailShareQuickV174');
-    const order=document.getElementById('dealerOrderQuickV161');
-    if(order)order.textContent='📦 Đơn hàng';
-    if(bizWrap)bizWrap.hidden=!dealer;
-    if(shareWrap)shareWrap.hidden=dealer;
-    if(share)share.hidden=dealer;
-  }
-  window.refreshRetailShareV174=refreshV174;
+ function dealerV174(){
+  try{return !!(curCustomer&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip')&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
+ }
+ function retailV174(){
+  try{return !!(curCustomer&&curCustomer.tier==='retail'&&curCustomer.status!=='rejected'&&curCustomer.status!=='deleted'&&curCustomer.active!==false)}catch(e){return false}
+ }
+ function ensureV174(){
   try{
-    const base=renderCustomer;
-    renderCustomer=function(){
-      const r=base.apply(this,arguments);
-      requestAnimationFrame(refreshV174);
-      return r;
-    };
+   if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161();
+   const row=document.getElementById('customerQuickRowV161');
+   if(!row)return;
+   let wrap=document.getElementById('retailShareWrapV174');
+   if(!wrap){
+    wrap=document.createElement('div');
+    wrap.id='retailShareWrapV174';
+    wrap.className='customerQuickActionWrapV161';
+    wrap.innerHTML='<button id="retailShareQuickV174" class="customerQuickBtnV161 shareV174" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
+    row.appendChild(wrap);
+   }
   }catch(e){}
-  document.addEventListener('DOMContentLoaded',refreshV174);
-  setTimeout(refreshV174,100);
-  setTimeout(refreshV174,800);
+ }
+ function refreshV174(){
+  ensureV174();
+  const dealer=dealerV174(),retail=retailV174();
+  const biz=document.getElementById('dealerBizQuickV161');
+  const bizWrap=biz&&biz.parentElement;
+  const shareWrap=document.getElementById('retailShareWrapV174');
+  const share=document.getElementById('retailShareQuickV174');
+  const order=document.getElementById('dealerOrderQuickV161');
+  if(order)order.textContent='📦 Đơn hàng';
+  if(bizWrap)bizWrap.hidden=!dealer;
+  if(shareWrap)shareWrap.hidden=!retail;
+  if(share)share.hidden=!retail;
+  const label=document.querySelector('#nppPicker .nppSelectLabel');
+  if(label)label.textContent='LỰA CHỌN NPP/CUNG CẤP';
+ }
+ window.refreshRetailShareV174=refreshV174;
+ try{
+  const base=renderCustomer;
+  renderCustomer=function(){
+   const r=base.apply(this,arguments);
+   requestAnimationFrame(refreshV174);
+   return r;
+  };
+ }catch(e){}
+ document.addEventListener('DOMContentLoaded',refreshV174);
+ window.addEventListener('pageshow',refreshV174);
+ window.addEventListener('focus',refreshV174);
+ setTimeout(refreshV174,100);
+ setTimeout(refreshV174,800);
 })();
 </script>
 </body></html>

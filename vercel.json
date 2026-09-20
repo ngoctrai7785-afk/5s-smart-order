@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://5s-smart-order.netlify.app/api/:path*"
+    },
+    {
+      "source": "/dat-hang",
+      "destination": "/dat-hang.html"
+    },
+    {
+      "source": "/dat-hang/",
+      "destination": "/dat-hang.html"
+    },
+    {
+      "source": "/quan-ly",
+      "destination": "/quan-ly.html"
+    },
+    {
+      "source": "/quan-ly/",
+      "destination": "/quan-ly.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/5S_SMART_ORDER_DAT_HANG_DIEN_THOAI.html",
+      "destination": "/dat-hang",
+      "permanent": true
+    },
+    {
+      "source": "/5S_SMART_ORDER_DAT_HANG_DIEN_THOAI",
+      "destination": "/dat-hang",
+      "permanent": true
+    },
+    {
+      "source": "/5S_SMART_ORDER_DAT_HANG.html",
+      "destination": "/dat-hang",
+      "permanent": true
+    },
+    {
+      "source": "/5S_SMART_ORDER_QUAN_LY.html",
+      "destination": "/quan-ly",
+      "permanent": true
+    }
+  ]
+}

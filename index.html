@@ -780,6 +780,123 @@ function invoiceHTML(o,forExcel=false){
 .customerStatusMenu{position:relative;display:inline-block}.customerStatusMenu summary{list-style:none;border:0;background:#eef5ff;color:#1261d8;border-radius:8px;padding:8px 11px;font-weight:900;cursor:pointer;white-space:nowrap}.customerStatusMenu summary::-webkit-details-marker{display:none}.customerStatusMenu[open] summary{background:#1261d8;color:#fff}.customerStatusOptions{position:absolute;right:0;top:42px;z-index:2500;width:150px;background:#fff;border:1px solid var(--ln);border-radius:12px;padding:7px;box-shadow:0 16px 36px #0f172a2b}.customerStatusOptions button{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:8px;padding:10px;font-weight:850;color:#0f172a;margin:1px 0}.customerStatusOptions button:hover{background:#eef5ff;color:#1261d8}.customerStatusOptions .danger{color:#b91c1c}.customerStatusOptions .danger:hover{background:#fee2e2;color:#b91c1c}
 </style></head><body>${closePreview}<div class="invoice"><div class="head"><div class="brand"><b>${settings.distributor||'ĐIỆN MÁY 5S'}</b><div>Uy tín tạo niềm tin</div></div><div class="title"><h2>HÓA ĐƠN BÁN HÀNG</h2><div><b>Số:</b> ${o.id}</div><div><b>Ngày:</b> ${o.created}</div></div></div><div class="meta"><div><strong>Khách hàng:</strong> ${o.buyer}</div><div><strong>Số điện thoại:</strong> ${o.phone}</div><div><strong>Người nhận:</strong> ${o.receiver||o.buyer}</div><div><strong>Loại khách:</strong> ${o.tier==='vip'?'VIP':o.tier==='wholesale'?'Cửa hàng/Đại lý':'Khách lẻ'}</div><div style="grid-column:1/3"><strong>Địa chỉ:</strong> ${o.address}</div><div style="grid-column:1/3"><strong>Ghi chú:</strong> ${o.note||'Không có'}</div></div><table><thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>${rows}</tbody></table><div class="sum"><div><span>Tổng số lượng</span><b>${grouped.reduce((a,x)=>a+x.qty,0)}</b></div><div class="total"><span>TỔNG THANH TOÁN</span><span>${money(o.total)}</span></div></div><div class="sign"><div><b>Người mua hàng</b><span>(Ký và ghi rõ họ tên)</span></div><div><b>Người bán hàng</b><span>(Ký và ghi rõ họ tên)</span></div></div><div class="note">Cảm ơn quý khách đã đặt hàng tại 5S Smart Order!</div></div>
 
+
+<!-- V177_LINKED_RETAIL_SHARE_FINAL -->
+<style id="linkedRetailShareV177Style">
+#customerQuickRowV161{align-items:stretch!important}
+#retailShareQuickV177{background:#f5f9ff!important;border-color:#b9d2f5!important;color:#0b4fae!important}
+#retailShareWrapV177[hidden]{display:none!important}
+@media(max-width:700px){
+ #customerQuickRowV161 .customerQuickBtnV161{padding-left:4px!important;padding-right:4px!important;font-size:11px!important;white-space:nowrap!important}
+}
+</style>
+<script>
+/* V177: Chỉ khách lẻ ĐÃ LIÊN KẾT đại lý mới thấy Chia sẻ.
+   Đại lý/VIP giữ Kinh doanh. Link/QR khách chia sẻ tiếp luôn giữ đại lý gốc. */
+(function(){
+  const baseCurrentOrderLinkV177=window.currentOrderLink;
+  const baseDrawQRV177=window.drawQR;
+
+  function activeCustomerV177(c){
+    return !!(c&&c.status!=='rejected'&&c.status!=='deleted'&&c.active!==false);
+  }
+  function dealerAccountV177(){
+    try{return !!(activeCustomerV177(curCustomer)&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip'))}catch(e){return false}
+  }
+  function originalDealerIdV177(){
+    try{
+      if(activeCustomerV177(curCustomer)&&curCustomer.tier==='retail'&&curCustomer.refDealerId)return String(curCustomer.refDealerId);
+      if(activeCustomerV177(curCustomer)&&curCustomer.tier==='retail'&&typeof referralBindingV161==='function'){
+        const b=referralBindingV161();
+        if(b&&b.dealerId)return String(b.dealerId);
+      }
+    }catch(e){}
+    return '';
+  }
+  function linkedRetailV177(){
+    try{return !!(activeCustomerV177(curCustomer)&&curCustomer.tier==='retail'&&originalDealerIdV177())}catch(e){return false}
+  }
+  function shareLinkV177(source){
+    let base='';
+    try{
+      base=typeof orderEntryLink==='function'?orderEntryLink(source||'link'):(baseCurrentOrderLinkV177?baseCurrentOrderLinkV177():location.href);
+      const dealerId=originalDealerIdV177();
+      if(!dealerId)return base;
+      const u=new URL(base,location.href);
+      u.searchParams.set('refDealer',dealerId);
+      u.searchParams.set('source','dealer-ref');
+      u.searchParams.set('mode','order');
+      u.searchParams.set('view','customer');
+      u.searchParams.set('tenant',String(window.ORDER_TENANT_ID||'npp1'));
+      if(typeof currentTenantUnitV159==='function')u.searchParams.set('unit',currentTenantUnitV159());
+      return u.href;
+    }catch(e){return base||location.href}
+  }
+
+  window.currentOrderLink=function(){
+    return linkedRetailV177()?shareLinkV177('link'):baseCurrentOrderLinkV177();
+  };
+  window.drawQR=function(){
+    if(!linkedRetailV177())return baseDrawQRV177();
+    const link=shareLinkV177('qr');
+    const text=document.getElementById('retailLink');
+    const img=document.getElementById('qrRetailImg');
+    if(text)text.textContent=link;
+    if(img)img.src='https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=12&data='+encodeURIComponent(link);
+  };
+
+  function ensureShareV177(){
+    try{if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161()}catch(e){}
+    const row=document.getElementById('customerQuickRowV161');
+    if(!row)return;
+    ['retailShareWrapV174','retailShareWrapV176'].forEach(id=>{const x=document.getElementById(id);if(x)x.remove()});
+    let wrap=document.getElementById('retailShareWrapV177');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='retailShareWrapV177';
+      wrap.className='customerQuickActionWrapV161';
+      wrap.innerHTML='<button id="retailShareQuickV177" class="customerQuickBtnV161" type="button" onclick="openShareQr()">↗ Chia sẻ</button>';
+      row.appendChild(wrap);
+    }
+  }
+  function refreshShareV177(){
+    ensureShareV177();
+    const row=document.getElementById('customerQuickRowV161');
+    if(!row)return;
+    const dealer=dealerAccountV177();
+    const linked=linkedRetailV177();
+    const biz=document.getElementById('dealerBizQuickV161');
+    const bizWrap=biz&&biz.parentElement;
+    const share=document.getElementById('retailShareQuickV177');
+    const shareWrap=document.getElementById('retailShareWrapV177');
+    const order=document.getElementById('dealerOrderQuickV161');
+    if(order)order.textContent='📦 Đơn hàng';
+    if(bizWrap){bizWrap.hidden=!dealer;bizWrap.style.display=dealer?'':'none'}
+    if(biz){biz.hidden=!dealer;biz.style.display=dealer?'':'none'}
+    if(shareWrap){shareWrap.hidden=!linked;shareWrap.style.display=linked?'':'none'}
+    if(share){share.hidden=!linked;share.style.display=linked?'':'none'}
+    if(dealer||linked)row.style.gridTemplateColumns='minmax(0,1fr) 86px 92px';
+    else row.style.gridTemplateColumns='minmax(0,1fr) 94px';
+  }
+  window.refreshLinkedShareV177=refreshShareV177;
+
+  try{
+    const baseRenderV177=renderCustomer;
+    renderCustomer=function(){
+      const r=baseRenderV177.apply(this,arguments);
+      requestAnimationFrame(()=>requestAnimationFrame(refreshShareV177));
+      return r;
+    };
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshShareV177,30));
+  window.addEventListener('pageshow',()=>setTimeout(refreshShareV177,30));
+  window.addEventListener('focus',()=>setTimeout(refreshShareV177,30));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refreshShareV177,30)});
+  setTimeout(refreshShareV177,100);
+  setTimeout(refreshShareV177,600);
+  setTimeout(refreshShareV177,1500);
+})();
+</script>
 </body></html>`;
 }
 function printOrder(id){let o=orders.find(x=>x.id===id);if(!o)return;let w=window.open('','_blank');if(!w)return toast('Trình duyệt đang chặn cửa sổ in');w.document.open();w.document.write(invoiceHTML(o));w.document.close();setTimeout(()=>{w.focus();w.print()},450)}

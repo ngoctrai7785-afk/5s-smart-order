@@ -1,26 +1,33 @@
-name: Verify live Smart Order frontends
+name: Inspect live Smart Order pagination code
 on:
   push:
     branches:
       - recovery-check-20260921
 jobs:
-  verify:
+  inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Compare live frontends
+      - name: Inspect live source
         shell: bash
         run: |
           set -euo pipefail
-          check () {
-            label="$1"; url="$2"; out="/tmp/$label.html"; hdr="/tmp/$label.hdr"
-            code=$(curl -sS -L --max-time 60 -D "$hdr" -o "$out" -w "%{http_code}" "$url" || true)
-            final=$(curl -sS -L --max-time 60 -o /dev/null -w "%{url_effective}" "$url" || true)
-            bytes=$(wc -c < "$out" 2>/dev/null || echo 0)
-            phrase=$( { grep -o "Xem thêm 24 sản phẩm" "$out" 2>/dev/null || true; } | wc -l | tr -d ' ' )
-            phrase2=$( { grep -o "Đang hiển thị 24 / 294 sản phẩm" "$out" 2>/dev/null || true; } | wc -l | tr -d ' ' )
-            full=$( { grep -o "full-catalog-20260921" "$out" 2>/dev/null || true; } | wc -l | tr -d ' ' )
-            echo "$label status=$code bytes=$bytes phrase24=$phrase phrase24of294=$phrase2 fullmark=$full final=$final"
+          curl -fsSL --max-time 60 "https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/smart-order-v26?mode=order&view=customer&npp=npp1" -o /tmp/old.html
+          curl -fsSL --max-time 60 "https://5s-smart-order.vercel.app/?mode=order&view=customer&tenant=npp1" -o /tmp/new.html
+          cat > /tmp/inspect.mjs <<'NODE'
+          import fs from 'node:fs';
+          for (const [label,file] of [['old','/tmp/old.html'],['new','/tmp/new.html']]) {
+            const c=fs.readFileSync(file,'utf8');
+            const needles=['Xem thêm','Đang hiển thị','loadMore','visibleCount','productVisible','slice(0,','+=24','+ 24','24 /','sản phẩm'];
+            console.log('SOURCE',label,'bytes',c.length);
+            for(const n of needles){
+              let pos=0,count=0;
+              while((pos=c.indexOf(n,pos))>=0 && count<8){
+                const snip=c.slice(Math.max(0,pos-260),Math.min(c.length,pos+700)).replace(/\s+/g,' ');
+                console.log('MATCH',label,JSON.stringify(n),'at',pos,':',snip);
+                pos+=n.length;count++;
+              }
+              if(!count) console.log('MATCH',label,JSON.stringify(n),'NONE');
+            }
           }
-          check vercel_root "https://5s-smart-order.vercel.app/?mode=order&view=customer&tenant=npp1&appv=full-catalog-20260921"
-          check vercel_order "https://5s-smart-order.vercel.app/dat-hang?mode=order&view=customer&tenant=npp1&appv=full-catalog-20260921"
-          check old_chatgpt "https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/smart-order-v26?mode=order&view=customer&npp=npp1"
+          NODE
+          node /tmp/inspect.mjs

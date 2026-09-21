@@ -1,0 +1,1 @@
+Trigger recovery check after Supabase Edge Function v3.

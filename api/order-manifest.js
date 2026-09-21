@@ -2,7 +2,7 @@ export default function handler(req,res){
   const tenant=String(req.query.tenant||'npp1').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,48)||'npp1';
   const unit=String(req.query.unit||'Ngọc Trai').slice(0,60);
   const account=String(req.query.account||'').slice(0,200);
-  const q=new URLSearchParams({mode:'order',view:'customer',tenant,unit,installed:'1'});
+  const q=new URLSearchParams({mode:'order',view:'customer',tenant,unit,installed:'1',appv:'full-catalog-20260921'});
   if(account)q.set('account',account);
   res.setHeader('content-type','application/manifest+json; charset=utf-8');
   res.setHeader('cache-control','no-store');

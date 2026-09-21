@@ -2,6 +2,14 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/smart-order-v26",
+      "destination": "/smart-order-v26.html"
+    },
+    {
+      "source": "/smart-order-v26/",
+      "destination": "/smart-order-v26.html"
+    },
+    {
       "source": "/dat-hang",
       "destination": "/dat-hang.html"
     },

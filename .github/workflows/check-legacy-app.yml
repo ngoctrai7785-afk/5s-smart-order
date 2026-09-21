@@ -7,24 +7,31 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check legacy catalog
+      - name: Check legacy app source and manifest
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/api/catalog"
-          curl -fsS --max-time 45 -H "x-order-tenant: npp1" -H "cache-control: no-cache" "$URL?_=$(date +%s)" -o /tmp/catalog.json
+          BASE="https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site"
+          curl -fsS --max-time 45 -H "x-order-tenant: npp1" -H "cache-control: no-cache" "$BASE/api/catalog?_=$(date +%s)" -o /tmp/catalog.json
+          curl -fsS --max-time 45 -H "cache-control: no-cache" "$BASE/smart-order-v26?mode=order&view=customer&npp=npp1&_=$(date +%s)" -o /tmp/app.html
+          curl -fsS --max-time 45 -H "cache-control: no-cache" "$BASE/api/order-manifest?tenant=npp1&unit=Ngoc%20Trai&v=201" -o /tmp/manifest.json
           node - <<'NODE'
           const fs=require('fs');
           const j=JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
-          const s=j.state||j;
-          const p=Array.isArray(s.products)?s.products:[];
-          const c=Array.isArray(s.categories)?s.categories:[];
-          const pr=Array.isArray(s.promotions)?s.promotions:[];
+          const s=j.state||j,p=Array.isArray(s.products)?s.products:[];
+          const html=fs.readFileSync('/tmp/app.html','utf8');
+          let manifest={};try{manifest=JSON.parse(fs.readFileSync('/tmp/manifest.json','utf8'))}catch{}
+          const core=(html.match(/SMART_ORDER_CORE_VERSION\s*=\s*(\d+)/)||[])[1]||null;
+          const manifestV=(html.match(/order-manifest[^'"\\s>]*[?&]v=(\d+)/)||[])[1]||null;
           console.log(JSON.stringify({
             total_products:p.length,
             active_products:p.filter(x=>x.active!==false).length,
             hidden_products:p.filter(x=>x.active===false).length,
-            categories:c.length,
-            promotions:pr.length
+            core_version:core,
+            manifest_version:manifestV,
+            has_load_more_24:html.includes('Xem thêm 24 sản phẩm'),
+            has_showing_text:html.includes('Đang hiển thị'),
+            manifest_start_url:manifest.start_url||null,
+            manifest_scope:manifest.scope||null
           }));
           NODE

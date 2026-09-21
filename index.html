@@ -2033,6 +2033,17 @@ body.linkedRetailFullV181 #customerView>.orderBar{display:block}
     return '';
   }
   function linkedRetailV181(){return !!dealerIdV181()}
+  let referralPersistingV181=false;
+  async function persistLinkedRetailV181(){
+    if(referralPersistingV181||!validV181(curCustomer)||curCustomer.tier!=='retail'||curCustomer.refDealerId)return;
+    const dealerId=dealerIdV181();if(!dealerId)return;
+    referralPersistingV181=true;
+    try{
+      const patch={...curCustomer,refDealerId:dealerId,referralBoundAt:curCustomer.referralBoundAt||new Date().toISOString(),referralSource:curCustomer.referralSource||'dealer-qr'};
+      const r=await fetch(CUSTOMERS_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'register',customer:patch})});
+      if(r.ok){const j=await r.json();Object.assign(curCustomer,j.customer||patch);persist()}
+    }catch(e){}finally{referralPersistingV181=false}
+  }
   function dealerAccountV181(){
     return !!(validV181(curCustomer)&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip'));
   }
@@ -2095,7 +2106,7 @@ body.linkedRetailFullV181 #customerView>.orderBar{display:block}
   }
 
   function refreshV181(){
-    ensureShareV181();fullLayoutV181();
+    ensureShareV181();fullLayoutV181();persistLinkedRetailV181();
     const row=document.getElementById('customerQuickRowV161');if(!row)return;
     const linked=linkedRetailV181(),dealer=dealerAccountV181();
     const biz=document.getElementById('dealerBizQuickV161'),bizWrap=biz&&biz.parentElement;

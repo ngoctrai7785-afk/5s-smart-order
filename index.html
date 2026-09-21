@@ -784,151 +784,6 @@ function invoiceHTML(o,forExcel=false){
 
 
 
-<!-- V181_CONSOLIDATED_LINKED_RETAIL_SHARE -->
-<style id="linkedRetailShareV181Style">
-#customerQuickRowV161{align-items:stretch!important}
-#customerQuickRowV161 .customerQuickActionWrapV161[hidden]{display:none!important}
-#retailShareQuickV181{background:#f5f9ff!important;border-color:#b9d2f5!important;color:#0b4fae!important}
-@media(max-width:700px){
-  #customerQuickRowV161.customerQuickRowV161{gap:4px!important}
-  #customerQuickRowV161 .customerQuickActionWrapV161{min-width:0!important}
-  #customerQuickRowV161 .customerQuickBtnV161{font-size:10px!important;padding:3px 4px!important;white-space:nowrap!important}
-}
-/* Khách lẻ đã liên kết phải luôn dùng đầy đủ giao diện đặt hàng bình thường */
-body.linkedRetailFullV181 #customerView{display:block!important}
-body.linkedRetailFullV181 #customerView>.phoneHead,
-body.linkedRetailFullV181 #customerView>#nppPicker,
-body.linkedRetailFullV181 #customerView>#promoHero,
-body.linkedRetailFullV181 #customerView>#promoDots,
-body.linkedRetailFullV181 #customerView>#customerCats,
-body.linkedRetailFullV181 #customerView>.search,
-body.linkedRetailFullV181 #customerView>#customerProducts,
-body.linkedRetailFullV181 #customerView>.orderBar{display:flex}
-body.linkedRetailFullV181 #customerView>#nppPicker,
-body.linkedRetailFullV181 #customerView>#promoHero,
-body.linkedRetailFullV181 #customerView>#promoDots,
-body.linkedRetailFullV181 #customerView>#customerCats,
-body.linkedRetailFullV181 #customerView>#customerProducts{display:block}
-body.linkedRetailFullV181 #customerView>.search{display:flex}
-body.linkedRetailFullV181 #customerView>.orderBar{display:block}
-</style>
-<script>
-(function(){
-  const baseCurrentOrderLinkV181=window.currentOrderLink;
-  const baseDrawQRV181=window.drawQR;
-
-  function validV181(c){
-    return !!(c&&c.status!=='rejected'&&c.status!=='deleted'&&c.active!==false);
-  }
-  function dealerIdV181(){
-    try{
-      if(!validV181(curCustomer)||curCustomer.tier!=='retail')return '';
-      if(curCustomer.refDealerId)return String(curCustomer.refDealerId);
-      const incoming=(new URLSearchParams(location.search).get('refDealer')||'').trim();
-      if(incoming)return incoming;
-      if(typeof referralBindingV161==='function'){
-        const b=referralBindingV161();if(b&&b.dealerId)return String(b.dealerId);
-      }
-      const raw=JSON.parse(localStorage.getItem('s5ReferralDealerBindingV161')||'null');
-      if(raw&&raw.dealerId)return String(raw.dealerId);
-    }catch(e){}
-    return '';
-  }
-  function linkedRetailV181(){return !!dealerIdV181()}
-  function dealerAccountV181(){
-    return !!(validV181(curCustomer)&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip'));
-  }
-  function shareLinkV181(source='link'){
-    let base='';
-    try{base=typeof orderEntryLink==='function'?orderEntryLink(source):(baseCurrentOrderLinkV181?baseCurrentOrderLinkV181():location.href)}catch(e){base=location.href}
-    try{
-      const id=dealerIdV181();if(!id)return base;
-      const u=new URL(base,location.href);
-      u.searchParams.set('refDealer',id);
-      u.searchParams.set('source','dealer-ref');
-      u.searchParams.set('mode','order');
-      u.searchParams.set('view','customer');
-      u.searchParams.set('tenant',String(window.ORDER_TENANT_ID||'npp1'));
-      if(typeof currentTenantUnitV159==='function')u.searchParams.set('unit',currentTenantUnitV159());
-      return u.href;
-    }catch(e){return base||location.href}
-  }
-
-  window.currentOrderLink=function(){
-    return linkedRetailV181()?shareLinkV181('link'):(baseCurrentOrderLinkV181?baseCurrentOrderLinkV181():location.href);
-  };
-  window.drawQR=function(){
-    if(!linkedRetailV181())return baseDrawQRV181&&baseDrawQRV181();
-    const link=shareLinkV181('qr');
-    const text=document.getElementById('retailLink'),img=document.getElementById('qrRetailImg');
-    if(text)text.textContent=link;
-    if(img)img.src='https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=12&data='+encodeURIComponent(link);
-  };
-
-  function ensureShareV181(){
-    try{if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161()}catch(e){}
-    const row=document.getElementById('customerQuickRowV161');if(!row)return;
-    ['retailShareWrapV174','retailShareWrapV176','retailShareWrapV177','retailShareWrapV179'].forEach(id=>document.getElementById(id)?.remove());
-    let wrap=document.getElementById('retailShareWrapV181');
-    if(!wrap){
-      wrap=document.createElement('div');
-      wrap.id='retailShareWrapV181';
-      wrap.className='customerQuickActionWrapV161';
-      wrap.innerHTML='<button id="retailShareQuickV181" class="customerQuickBtnV161" type="button">↗ Chia sẻ</button>';
-      row.appendChild(wrap);
-    }
-    const btn=document.getElementById('retailShareQuickV181');
-    if(btn)btn.onclick=function(){
-      if(typeof openShareQr==='function')openShareQr();
-      else if(navigator.share)navigator.share({title:'Đặt hàng',url:shareLinkV181('link')}).catch(()=>{});
-    };
-  }
-
-  function fullLayoutV181(){
-    const linked=linkedRetailV181();
-    document.body.classList.toggle('linkedRetailFullV181',linked);
-    if(!linked)return;
-    /* Tài khoản khách lẻ đã có dữ liệu thì không được giữ các trạng thái preview/cài đặt làm ẩn giao diện */
-    if(validV181(curCustomer)){
-      document.body.classList.remove('productShareChoiceMode','onboardingRegisterMode','installGateMode');
-      const gate=document.getElementById('installGate');if(gate)gate.classList.add('hidden');
-      const reg=document.getElementById('registerModal');if(reg&&reg.style.display==='flex')reg.style.display='none';
-    }
-  }
-
-  function refreshV181(){
-    ensureShareV181();fullLayoutV181();
-    const row=document.getElementById('customerQuickRowV161');if(!row)return;
-    const linked=linkedRetailV181(),dealer=dealerAccountV181();
-    const biz=document.getElementById('dealerBizQuickV161'),bizWrap=biz&&biz.parentElement;
-    if(bizWrap){bizWrap.hidden=!dealer;bizWrap.style.display=dealer?'':'none'}
-    if(biz){biz.hidden=!dealer;biz.style.display=dealer?'':'none'}
-    const shareWrap=document.getElementById('retailShareWrapV181');
-    if(shareWrap){shareWrap.hidden=!linked;shareWrap.style.display=linked?'':'none'}
-    const order=document.getElementById('dealerOrderQuickV161');if(order)order.textContent='📦 Đơn hàng';
-    const label=document.querySelector('#nppPicker .nppSelectLabel');if(label)label.textContent='LỰA CHỌN NPP/CUNG CẤP';
-    const visible=Array.from(row.children).filter(x=>!x.hidden&&x.style.display!=='none');
-    const actions=Math.max(1,visible.length-1),w=window.innerWidth<=700?76:90;
-    row.style.gridTemplateColumns='minmax(0,1fr) '+Array(actions).fill(w+'px').join(' ');
-  }
-
-  window.refreshRetailShareV181=refreshV181;
-  try{
-    const baseRenderV181=renderCustomer;
-    renderCustomer=function(){
-      const r=baseRenderV181.apply(this,arguments);
-      requestAnimationFrame(()=>requestAnimationFrame(refreshV181));
-      return r;
-    };
-  }catch(e){}
-
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshV181,40));
-  window.addEventListener('pageshow',()=>setTimeout(refreshV181,40));
-  window.addEventListener('focus',()=>setTimeout(refreshV181,40));
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refreshV181,40)});
-  setTimeout(refreshV181,120);setTimeout(refreshV181,800);setTimeout(refreshV181,1800);
-})();
-</script>
 </body></html>`;
 }
 function printOrder(id){let o=orders.find(x=>x.id===id);if(!o)return;let w=window.open('','_blank');if(!w)return toast('Trình duyệt đang chặn cửa sổ in');w.document.open();w.document.write(invoiceHTML(o));w.document.close();setTimeout(()=>{w.focus();w.print()},450)}
@@ -2127,4 +1982,149 @@ setTimeout(()=>{try{renderDealerProductHhBadgesV166()}catch(e){}},350);
 })();
 </script>
 
-</body></html>
+\n<!-- V181_CONSOLIDATED_LINKED_RETAIL_SHARE -->
+<style id="linkedRetailShareV181Style">
+#customerQuickRowV161{align-items:stretch!important}
+#customerQuickRowV161 .customerQuickActionWrapV161[hidden]{display:none!important}
+#retailShareQuickV181{background:#f5f9ff!important;border-color:#b9d2f5!important;color:#0b4fae!important}
+@media(max-width:700px){
+  #customerQuickRowV161.customerQuickRowV161{gap:4px!important}
+  #customerQuickRowV161 .customerQuickActionWrapV161{min-width:0!important}
+  #customerQuickRowV161 .customerQuickBtnV161{font-size:10px!important;padding:3px 4px!important;white-space:nowrap!important}
+}
+/* Khách lẻ đã liên kết phải luôn dùng đầy đủ giao diện đặt hàng bình thường */
+body.linkedRetailFullV181 #customerView{display:block!important}
+body.linkedRetailFullV181 #customerView>.phoneHead,
+body.linkedRetailFullV181 #customerView>#nppPicker,
+body.linkedRetailFullV181 #customerView>#promoHero,
+body.linkedRetailFullV181 #customerView>#promoDots,
+body.linkedRetailFullV181 #customerView>#customerCats,
+body.linkedRetailFullV181 #customerView>.search,
+body.linkedRetailFullV181 #customerView>#customerProducts,
+body.linkedRetailFullV181 #customerView>.orderBar{display:flex}
+body.linkedRetailFullV181 #customerView>#nppPicker,
+body.linkedRetailFullV181 #customerView>#promoHero,
+body.linkedRetailFullV181 #customerView>#promoDots,
+body.linkedRetailFullV181 #customerView>#customerCats,
+body.linkedRetailFullV181 #customerView>#customerProducts{display:block}
+body.linkedRetailFullV181 #customerView>.search{display:flex}
+body.linkedRetailFullV181 #customerView>.orderBar{display:block}
+</style>
+<script>
+(function(){
+  const baseCurrentOrderLinkV181=window.currentOrderLink;
+  const baseDrawQRV181=window.drawQR;
+
+  function validV181(c){
+    return !!(c&&c.status!=='rejected'&&c.status!=='deleted'&&c.active!==false);
+  }
+  function dealerIdV181(){
+    try{
+      if(!validV181(curCustomer)||curCustomer.tier!=='retail')return '';
+      if(curCustomer.refDealerId)return String(curCustomer.refDealerId);
+      const incoming=(new URLSearchParams(location.search).get('refDealer')||'').trim();
+      if(incoming)return incoming;
+      if(typeof referralBindingV161==='function'){
+        const b=referralBindingV161();if(b&&b.dealerId)return String(b.dealerId);
+      }
+      const raw=JSON.parse(localStorage.getItem('s5ReferralDealerBindingV161')||'null');
+      if(raw&&raw.dealerId)return String(raw.dealerId);
+    }catch(e){}
+    return '';
+  }
+  function linkedRetailV181(){return !!dealerIdV181()}
+  function dealerAccountV181(){
+    return !!(validV181(curCustomer)&&(curCustomer.tier==='wholesale'||curCustomer.tier==='vip'));
+  }
+  function shareLinkV181(source='link'){
+    let base='';
+    try{base=typeof orderEntryLink==='function'?orderEntryLink(source):(baseCurrentOrderLinkV181?baseCurrentOrderLinkV181():location.href)}catch(e){base=location.href}
+    try{
+      const id=dealerIdV181();if(!id)return base;
+      const u=new URL(base,location.href);
+      u.searchParams.set('refDealer',id);
+      u.searchParams.set('source','dealer-ref');
+      u.searchParams.set('mode','order');
+      u.searchParams.set('view','customer');
+      u.searchParams.set('tenant',String(window.ORDER_TENANT_ID||'npp1'));
+      if(typeof currentTenantUnitV159==='function')u.searchParams.set('unit',currentTenantUnitV159());
+      return u.href;
+    }catch(e){return base||location.href}
+  }
+
+  window.currentOrderLink=function(){
+    return linkedRetailV181()?shareLinkV181('link'):(baseCurrentOrderLinkV181?baseCurrentOrderLinkV181():location.href);
+  };
+  window.drawQR=function(){
+    if(!linkedRetailV181())return baseDrawQRV181&&baseDrawQRV181();
+    const link=shareLinkV181('qr');
+    const text=document.getElementById('retailLink'),img=document.getElementById('qrRetailImg');
+    if(text)text.textContent=link;
+    if(img)img.src='https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=12&data='+encodeURIComponent(link);
+  };
+
+  function ensureShareV181(){
+    try{if(typeof ensureCustomerQuickRowV161==='function')ensureCustomerQuickRowV161()}catch(e){}
+    const row=document.getElementById('customerQuickRowV161');if(!row)return;
+    ['retailShareWrapV174','retailShareWrapV176','retailShareWrapV177','retailShareWrapV179'].forEach(id=>document.getElementById(id)?.remove());
+    let wrap=document.getElementById('retailShareWrapV181');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='retailShareWrapV181';
+      wrap.className='customerQuickActionWrapV161';
+      wrap.innerHTML='<button id="retailShareQuickV181" class="customerQuickBtnV161" type="button">↗ Chia sẻ</button>';
+      row.appendChild(wrap);
+    }
+    const btn=document.getElementById('retailShareQuickV181');
+    if(btn)btn.onclick=function(){
+      if(typeof openShareQr==='function')openShareQr();
+      else if(navigator.share)navigator.share({title:'Đặt hàng',url:shareLinkV181('link')}).catch(()=>{});
+    };
+  }
+
+  function fullLayoutV181(){
+    const linked=linkedRetailV181();
+    document.body.classList.toggle('linkedRetailFullV181',linked);
+    if(!linked)return;
+    /* Tài khoản khách lẻ đã có dữ liệu thì không được giữ các trạng thái preview/cài đặt làm ẩn giao diện */
+    if(validV181(curCustomer)){
+      document.body.classList.remove('productShareChoiceMode','onboardingRegisterMode','installGateMode');
+      const gate=document.getElementById('installGate');if(gate)gate.classList.add('hidden');
+      const reg=document.getElementById('registerModal');if(reg&&reg.style.display==='flex')reg.style.display='none';
+    }
+  }
+
+  function refreshV181(){
+    ensureShareV181();fullLayoutV181();
+    const row=document.getElementById('customerQuickRowV161');if(!row)return;
+    const linked=linkedRetailV181(),dealer=dealerAccountV181();
+    const biz=document.getElementById('dealerBizQuickV161'),bizWrap=biz&&biz.parentElement;
+    if(bizWrap){bizWrap.hidden=!dealer;bizWrap.style.display=dealer?'':'none'}
+    if(biz){biz.hidden=!dealer;biz.style.display=dealer?'':'none'}
+    const shareWrap=document.getElementById('retailShareWrapV181');
+    if(shareWrap){shareWrap.hidden=!linked;shareWrap.style.display=linked?'':'none'}
+    const order=document.getElementById('dealerOrderQuickV161');if(order)order.textContent='📦 Đơn hàng';
+    const label=document.querySelector('#nppPicker .nppSelectLabel');if(label)label.textContent='LỰA CHỌN NPP/CUNG CẤP';
+    const visible=Array.from(row.children).filter(x=>!x.hidden&&x.style.display!=='none');
+    const actions=Math.max(1,visible.length-1),w=window.innerWidth<=700?76:90;
+    row.style.gridTemplateColumns='minmax(0,1fr) '+Array(actions).fill(w+'px').join(' ');
+  }
+
+  window.refreshRetailShareV181=refreshV181;
+  try{
+    const baseRenderV181=renderCustomer;
+    renderCustomer=function(){
+      const r=baseRenderV181.apply(this,arguments);
+      requestAnimationFrame(()=>requestAnimationFrame(refreshV181));
+      return r;
+    };
+  }catch(e){}
+
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshV181,40));
+  window.addEventListener('pageshow',()=>setTimeout(refreshV181,40));
+  window.addEventListener('focus',()=>setTimeout(refreshV181,40));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refreshV181,40)});
+  setTimeout(refreshV181,120);setTimeout(refreshV181,800);setTimeout(refreshV181,1800);
+})();
+</script>
+\n</body></html>

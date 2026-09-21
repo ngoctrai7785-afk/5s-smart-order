@@ -19,3 +19,36 @@ jobs:
           curl -fsS --max-time 45 -H "x-order-tenant: npp1" "$BASE/images?id=639e6c3b-323f-4a8f-9430-7dbf8a8ae91e&tenant=npp1" -o /tmp/test-image.bin -D /tmp/test-image.headers
           echo "image_bytes=$(wc -c < /tmp/test-image.bin)"
           grep -i '^content-type:' /tmp/test-image.headers | head -1
+      - name: Migrate all recovered product images
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://upojgdqkkjwtbrzljffo.supabase.co/functions/v1/smart-order-api"
+          curl -fsS --max-time 60 -H "x-order-tenant: npp1" "$BASE/catalog?tenant=npp1&_=$(date +%s)" -o /tmp/catalog-all.json
+          cat > /tmp/migrate-images.mjs <<'NODE'
+          import fs from 'node:fs';
+          const base='https://upojgdqkkjwtbrzljffo.supabase.co/functions/v1/smart-order-api';
+          const j=JSON.parse(fs.readFileSync('/tmp/catalog-all.json','utf8'));
+          const s=j.state||{};
+          const values=[
+            ...(s.products||[]).map(x=>x.image),
+            ...(s.promotions||[]).map(x=>x.giftImage)
+          ].filter(x=>typeof x==='string'&&x.startsWith('/api/images?id='));
+          const unique=[...new Set(values.map(x=>new URL(x,'https://legacy.local').searchParams.get('id')).filter(Boolean))];
+          let cursor=0,ok=0,fail=0;
+          async function worker(){
+            while(true){
+              const i=cursor++;
+              if(i>=unique.length) return;
+              const id=unique[i];
+              try{
+                const r=await fetch(base+'/images?id='+encodeURIComponent(id)+'&tenant=npp1',{headers:{'x-order-tenant':'npp1'}});
+                if(r.ok){await r.arrayBuffer();ok++;}else fail++;
+              }catch{fail++;}
+            }
+          }
+          await Promise.all(Array.from({length:8},worker));
+          console.log(JSON.stringify({unique_images:unique.length,ok,fail}));
+          if(fail) process.exitCode=1;
+          NODE
+          node /tmp/migrate-images.mjs

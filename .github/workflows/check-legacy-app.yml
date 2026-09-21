@@ -1,30 +1,38 @@
-name: Check legacy Smart Order source
+name: Capture and patch legacy Smart Order
 on:
   push:
     branches:
       - legacy-app-check-20260921
+permissions:
+  contents: write
 jobs:
-  check:
+  patch:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect legacy product paging code
+      - uses: actions/checkout@v4
+        with:
+          ref: legacy-app-check-20260921
+      - name: Capture live legacy app and create full-catalog patch
         shell: bash
         run: |
           set -euo pipefail
           BASE="https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site"
-          curl -fsS --max-time 45 -H "cache-control: no-cache" "$BASE/smart-order-v26?mode=order&view=customer&npp=npp1&_=$(date +%s)" -o /tmp/app.html
-          node - <<'NODE'
-          const fs=require('fs');
-          const html=fs.readFileSync('/tmp/app.html','utf8');
-          const needles=['Đang hiển thị','customerProduct','loadMore','visibleCount','pageSize','Xem thêm','24 sản phẩm','slice(0,','products.length'];
-          for(const n of needles){
-            let pos=0,count=0;
-            while((pos=html.indexOf(n,pos))>=0 && count<8){
-              const s=html.slice(Math.max(0,pos-700),Math.min(html.length,pos+1800))
-                .replace(/data:image\/[a-z+.-]+;base64,[A-Za-z0-9+/=]+/g,'[IMAGE_DATA]')
-                .replace(/data:image\/svg\+xml[^"'\s)]+/g,'[SVG_DATA]');
-              console.log('\n--- '+n+' @ '+pos+' ---\n'+s);
-              pos+=n.length;count++;
-            }
-          }
-          NODE
+          curl -fsS --max-time 60 -H "cache-control: no-cache" "$BASE/smart-order-v26?mode=order&view=customer&npp=npp1&_=$(date +%s)" -o legacy-smart-order-v26-live.html
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          src=Path('legacy-smart-order-v26-live.html').read_text(encoding='utf-8')
+          before=src
+          # V196: keep the exact old app and data flows, only remove customer product batching.
+          src,n1=re.subn(r'customerProductLimitV196\s*=\s*12', 'customerProductLimitV196=Number.MAX_SAFE_INTEGER', src)
+          src,n2=re.subn(r'customerProductLimitV196\s*=\s*24', 'customerProductLimitV196=Number.MAX_SAFE_INTEGER', src)
+          if n1+n2 < 1:
+              raise SystemExit('V196 product limit assignments not found')
+          Path('legacy-smart-order-v26-full-catalog.html').write_text(src,encoding='utf-8')
+          print({'replaced_12':n1,'replaced_24':n2,'load_more_code_present':'customerLoadMoreV196' in src,'bytes':len(src.encode())})
+          PY
+          git config user.name "OpenAI Recovery"
+          git config user.email "actions@users.noreply.github.com"
+          git add legacy-smart-order-v26-live.html legacy-smart-order-v26-full-catalog.html
+          git commit -m "Capture legacy Smart Order and patch full catalog" || true
+          git push origin HEAD:legacy-app-check-20260921

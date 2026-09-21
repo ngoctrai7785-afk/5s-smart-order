@@ -1,0 +1,18 @@
+name: Recover Smart Order data
+on:
+  push:
+    branches:
+      - recovery-check-20260921
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger safe migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://upojgdqkkjwtbrzljffo.supabase.co/functions/v1/smart-order-api"
+          curl -fsS --max-time 45 -H "x-order-tenant: npp1" "$BASE/catalog?tenant=npp1&recover=1" -o /tmp/catalog.json
+          node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync("/tmp/catalog.json","utf8"));const s=j.state||{};console.log(JSON.stringify({catalog_ok:!!j.state,products:(s.products||[]).length,categories:(s.categories||[]).length,promotions:(s.promotions||[]).length,migrated_from:j.migrated_from||null}))'
+          curl -fsS --max-time 45 -H "x-order-tenant: npp1" "$BASE/health?tenant=npp1" -o /tmp/health.json
+          node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync("/tmp/health.json","utf8"));console.log(JSON.stringify({health_ok:j.ok===true,counts:j.counts||{},migrated_from:j.migrated_from||null}))'

@@ -1,0 +1,30 @@
+name: Check legacy Smart Order source
+on:
+  push:
+    branches:
+      - legacy-app-check-20260921
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check legacy catalog
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/api/catalog"
+          curl -fsS --max-time 45 -H "x-order-tenant: npp1" -H "cache-control: no-cache" "$URL?_=$(date +%s)" -o /tmp/catalog.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const j=JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
+          const s=j.state||j;
+          const p=Array.isArray(s.products)?s.products:[];
+          const c=Array.isArray(s.categories)?s.categories:[];
+          const pr=Array.isArray(s.promotions)?s.promotions:[];
+          console.log(JSON.stringify({
+            total_products:p.length,
+            active_products:p.filter(x=>x.active!==false).length,
+            hidden_products:p.filter(x=>x.active===false).length,
+            categories:c.length,
+            promotions:pr.length
+          }));
+          NODE

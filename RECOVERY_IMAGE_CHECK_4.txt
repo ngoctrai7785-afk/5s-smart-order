@@ -1,0 +1,1 @@
+Trigger image recovery verification after Supabase Edge Function v4.

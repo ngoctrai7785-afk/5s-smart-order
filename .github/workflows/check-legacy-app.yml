@@ -7,31 +7,24 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check legacy app source and manifest
+      - name: Inspect legacy product paging code
         shell: bash
         run: |
           set -euo pipefail
           BASE="https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site"
-          curl -fsS --max-time 45 -H "x-order-tenant: npp1" -H "cache-control: no-cache" "$BASE/api/catalog?_=$(date +%s)" -o /tmp/catalog.json
           curl -fsS --max-time 45 -H "cache-control: no-cache" "$BASE/smart-order-v26?mode=order&view=customer&npp=npp1&_=$(date +%s)" -o /tmp/app.html
-          curl -fsS --max-time 45 -H "cache-control: no-cache" "$BASE/api/order-manifest?tenant=npp1&unit=Ngoc%20Trai&v=201" -o /tmp/manifest.json
           node - <<'NODE'
           const fs=require('fs');
-          const j=JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
-          const s=j.state||j,p=Array.isArray(s.products)?s.products:[];
           const html=fs.readFileSync('/tmp/app.html','utf8');
-          let manifest={};try{manifest=JSON.parse(fs.readFileSync('/tmp/manifest.json','utf8'))}catch{}
-          const core=(html.match(/SMART_ORDER_CORE_VERSION\s*=\s*(\d+)/)||[])[1]||null;
-          const manifestV=(html.match(/order-manifest[^'"\\s>]*[?&]v=(\d+)/)||[])[1]||null;
-          console.log(JSON.stringify({
-            total_products:p.length,
-            active_products:p.filter(x=>x.active!==false).length,
-            hidden_products:p.filter(x=>x.active===false).length,
-            core_version:core,
-            manifest_version:manifestV,
-            has_load_more_24:html.includes('Xem thêm 24 sản phẩm'),
-            has_showing_text:html.includes('Đang hiển thị'),
-            manifest_start_url:manifest.start_url||null,
-            manifest_scope:manifest.scope||null
-          }));
+          const needles=['Đang hiển thị','customerProduct','loadMore','visibleCount','pageSize','Xem thêm','24 sản phẩm','slice(0,','products.length'];
+          for(const n of needles){
+            let pos=0,count=0;
+            while((pos=html.indexOf(n,pos))>=0 && count<8){
+              const s=html.slice(Math.max(0,pos-700),Math.min(html.length,pos+1800))
+                .replace(/data:image\/[a-z+.-]+;base64,[A-Za-z0-9+/=]+/g,'[IMAGE_DATA]')
+                .replace(/data:image\/svg\+xml[^"'\s)]+/g,'[SVG_DATA]');
+              console.log('\n--- '+n+' @ '+pos+' ---\n'+s);
+              pos+=n.length;count++;
+            }
+          }
           NODE

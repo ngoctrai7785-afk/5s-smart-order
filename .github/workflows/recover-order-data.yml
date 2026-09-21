@@ -16,3 +16,6 @@ jobs:
           node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync("/tmp/catalog.json","utf8"));const s=j.state||{};console.log(JSON.stringify({catalog_ok:!!j.state,products:(s.products||[]).length,categories:(s.categories||[]).length,promotions:(s.promotions||[]).length,migrated_from:j.migrated_from||null}))'
           curl -fsS --max-time 45 -H "x-order-tenant: npp1" "$BASE/health?tenant=npp1" -o /tmp/health.json
           node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync("/tmp/health.json","utf8"));console.log(JSON.stringify({health_ok:j.ok===true,counts:j.counts||{},migrated_from:j.migrated_from||null}))'
+          curl -fsS --max-time 45 -H "x-order-tenant: npp1" "$BASE/images?id=639e6c3b-323f-4a8f-9430-7dbf8a8ae91e&tenant=npp1" -o /tmp/test-image.bin -D /tmp/test-image.headers
+          echo "image_bytes=$(wc -c < /tmp/test-image.bin)"
+          grep -i '^content-type:' /tmp/test-image.headers | head -1

@@ -16,9 +16,9 @@ jobs:
             code=$(curl -sS -L --max-time 60 -D "$hdr" -o "$out" -w "%{http_code}" "$url" || true)
             final=$(curl -sS -L --max-time 60 -o /dev/null -w "%{url_effective}" "$url" || true)
             bytes=$(wc -c < "$out" 2>/dev/null || echo 0)
-            phrase=$(grep -o "Xem thêm 24 sản phẩm" "$out" 2>/dev/null | wc -l | tr -d ' ')
-            phrase2=$(grep -o "Đang hiển thị 24 / 294 sản phẩm" "$out" 2>/dev/null | wc -l | tr -d ' ')
-            full=$(grep -o "full-catalog-20260921" "$out" 2>/dev/null | wc -l | tr -d ' ')
+            phrase=$((grep -o "Xem thêm 24 sản phẩm" "$out" 2>/dev/null || true) | wc -l | tr -d ' ')
+            phrase2=$((grep -o "Đang hiển thị 24 / 294 sản phẩm" "$out" 2>/dev/null || true) | wc -l | tr -d ' ')
+            full=$((grep -o "full-catalog-20260921" "$out" 2>/dev/null || true) | wc -l | tr -d ' ')
             echo "$label status=$code bytes=$bytes phrase24=$phrase phrase24of294=$phrase2 fullmark=$full final=$final"
           }
           check vercel_root "https://5s-smart-order.vercel.app/?mode=order&view=customer&tenant=npp1&appv=full-catalog-20260921"

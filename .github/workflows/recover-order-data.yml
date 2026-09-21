@@ -1,4 +1,4 @@
-name: Verify Smart Order recovery
+name: Verify live Smart Order frontends
 on:
   push:
     branches:
@@ -7,17 +7,20 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify missing legacy images
+      - name: Compare live frontends
         shell: bash
         run: |
           set -euo pipefail
-          BASE="https://upojgdqkkjwtbrzljffo.supabase.co/functions/v1/smart-order-api"
-          IDS="54e3c078-21a7-4775-be99-95f6d030e8dc 4893ed5f-8221-4d29-b9d9-a6bf1445d58c 3c102c85-049c-4e40-9adc-6fe94e03ec86 3e879c52-d1d2-4bc3-9b3c-1184d0a2954f f8e82ebf-81ac-49b4-8dc3-459ebd7a5ca8 7dd9f68a-0b00-4f7c-8b4a-5a1a0dfc83d8 074d5345-de66-4339-a408-08de630733f5"
-          for id in $IDS; do
-            code=$(curl -sS --max-time 30 -o /tmp/img.bin -w "%{http_code}" -H "x-order-tenant: npp1" "$BASE/images?id=$id&tenant=npp1" || true)
-            bytes=$(wc -c < /tmp/img.bin 2>/dev/null || echo 0)
-            echo "edge $id status=$code bytes=$bytes"
-          done
-          code=$(curl -sS --max-time 30 -o /tmp/vercel.bin -w "%{http_code}" "https://5s-smart-order.vercel.app/api/images?id=639e6c3b-323f-4a8f-9430-7dbf8a8ae91e&tenant=npp1" || true)
-          bytes=$(wc -c < /tmp/vercel.bin 2>/dev/null || echo 0)
-          echo "vercel_image status=$code bytes=$bytes"
+          check () {
+            label="$1"; url="$2"; out="/tmp/$label.html"; hdr="/tmp/$label.hdr"
+            code=$(curl -sS -L --max-time 60 -D "$hdr" -o "$out" -w "%{http_code}" "$url" || true)
+            final=$(curl -sS -L --max-time 60 -o /dev/null -w "%{url_effective}" "$url" || true)
+            bytes=$(wc -c < "$out" 2>/dev/null || echo 0)
+            phrase=$(grep -o "Xem thêm 24 sản phẩm" "$out" 2>/dev/null | wc -l | tr -d ' ')
+            phrase2=$(grep -o "Đang hiển thị 24 / 294 sản phẩm" "$out" 2>/dev/null | wc -l | tr -d ' ')
+            full=$(grep -o "full-catalog-20260921" "$out" 2>/dev/null | wc -l | tr -d ' ')
+            echo "$label status=$code bytes=$bytes phrase24=$phrase phrase24of294=$phrase2 fullmark=$full final=$final"
+          }
+          check vercel_root "https://5s-smart-order.vercel.app/?mode=order&view=customer&tenant=npp1&appv=full-catalog-20260921"
+          check vercel_order "https://5s-smart-order.vercel.app/dat-hang?mode=order&view=customer&tenant=npp1&appv=full-catalog-20260921"
+          check old_chatgpt "https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/smart-order-v26?mode=order&view=customer&npp=npp1"

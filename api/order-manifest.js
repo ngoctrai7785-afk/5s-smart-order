@@ -10,7 +10,7 @@ export default function handler(req,res){
     name:unit+' - Đặt hàng',
     short_name:unit,
     description:'Smart Order - Đặt hàng nhanh',
-    start_url:'/dat-hang?'+q.toString(),
+    start_url:'/smart-order-v26?'+q.toString(),
     scope:'/',
     display:'standalone',
     background_color:'#ffffff',

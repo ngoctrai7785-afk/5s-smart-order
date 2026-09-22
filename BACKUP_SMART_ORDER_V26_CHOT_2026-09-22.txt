@@ -1,0 +1,20 @@
+5S SMART ORDER NGỌC TRAI - BẢN CHỐT 22/09/2026
+
+Tên gọi để dùng về sau:
+SMART ORDER V26 - BẢN CHỐT 22/09/2026
+
+Site khách cũ:
+https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site/smart-order-v26
+
+Repository:
+ngoctrai7785-afk/5s-smart-order
+
+Commit gốc khi chốt:
+8ed17e2b7a92774ee56c4185c7e01ea6664124a2
+
+Ghi chú:
+- Đây là nhánh sao lưu để tránh nhầm với các bản khác.
+- Không sửa trực tiếp nhánh backup này khi phát triển tiếp.
+- Khi cần sửa tiếp, hãy nói: "Lấy SMART ORDER V26 - BẢN CHỐT 22/09/2026 làm gốc."
+- Phần khuyến mãi tạm từng chèn vào mô tả sản phẩm đã được gỡ lại; dữ liệu sản phẩm đã trả về như cũ.
+- Banner khuyến mãi hiện đang chạy bình thường theo xác nhận sử dụng thực tế.

@@ -1,0 +1,23 @@
+name: Build backup ZIP
+
+on:
+  push:
+    branches:
+      - backup-smart-order-v26-chot-2026-09-22
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create backup package
+        run: |
+          mkdir -p out
+          zip -r out/SMART_ORDER_V26_CHOT_2026-09-22.zip . -x ".git/*" "out/*"
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SMART_ORDER_V26_CHOT_2026-09-22
+          path: out/SMART_ORDER_V26_CHOT_2026-09-22.zip
+          if-no-files-found: error

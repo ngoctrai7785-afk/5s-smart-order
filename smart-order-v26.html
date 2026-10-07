@@ -192,7 +192,7 @@ body{background:linear-gradient(135deg,#eef4ff 0%,#f8fafc 48%,#eefbf5 100%)}
 <section id="sec-settings" class="section"><div class="panel"><div class="panelHead"><h3>Cài đặt nhà phân phối</h3></div><div class="formCard"><div class="field full"><label>Tên nhà phân phối</label><input id="distributorName" placeholder="Ví dụ: ĐIỆN MÁY 5S"></div><div class="field full"><label>Zalo/Hotline</label><input id="distributorHotline" inputmode="tel" placeholder="Ví dụ: 0913 969 688"><small style="display:block;color:#64748b;margin-top:5px">Số này sẽ hiển thị cạnh tên NPP trên giao diện đặt hàng; khách có thể bấm để gọi.</small></div><div class="field full"><label>Tên quản trị viên</label><input id="administratorName" placeholder="Ví dụ: Nguyễn Văn A"></div><div class="field full"><label>Logo nhà phân phối</label><div class="logoUploadBox"><div id="distributorLogoPreview" class="logoPreview">Chưa có logo</div><div><input id="distributorLogoFile" type="file" accept="image/*" onchange="previewDistributorLogo(event)"><div class="logoUploadActions"><button type="button" class="btn btnOutline" onclick="removeDistributorLogo()">🗑 Xóa logo</button></div><div class="logoHelp">Nên dùng ảnh PNG/JPG nền trong hoặc nền trắng, hình vuông. Logo sẽ hiển thị ở giao diện đặt hàng và thanh quản lý.</div></div></div></div><div class="field full"><button class="btn btnBlue" onclick="saveSettings()">💾 Lưu cài đặt</button></div></div></div><div class="panel" style="margin-top:16px" id="referralCommissionSettingsV164"><div class="panelHead"><h3>💰 Cài đặt hoa hồng</h3></div><div class="formCard"><div class="field full"><label>Tỷ lệ hoa hồng đại lý (%)</label><div style="display:flex;align-items:center;gap:10px"><input id="referralCommissionPercentV164" type="number" min="0" max="100" step="1" inputmode="decimal" style="max-width:180px" value="50"><span style="font-weight:900;color:#0b4fae">% phần chênh lệch giá lẻ - giá đại lý</span></div><small style="display:block;color:#64748b;margin-top:6px;line-height:1.5">Mặc định 50%. Tỷ lệ mới chỉ áp dụng cho đơn khách giới thiệu phát sinh sau khi lưu; đơn cũ giữ nguyên tỷ lệ đã ghi nhận.</small></div><div class="field full"><div id="referralCommissionPreviewV164" style="padding:11px 13px;border-radius:11px;background:#f8fbff;border:1px solid #dbeafe;color:#334155;font-weight:800;line-height:1.5">Ví dụ: Giá lẻ 140.000đ, giá đại lý 100.000đ → chênh 40.000đ → HH 50% = 20.000đ/sp.</div></div><div class="field full"><button type="button" class="btn btnBlue" onclick="saveReferralCommissionSettingV164()">💾 Lưu hoa hồng</button></div></div></div><div class="panel" style="margin-top:16px"><div class="panelHead"><h3>🔒 Bảo mật tài khoản quản lý</h3></div><div class="formCard"><div class="field full"><label>PIN hiện tại</label><div class="pinInputWrap"><input id="currentManagerPin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="Nhập PIN đang sử dụng"><button type="button" class="pinEye" aria-label="Xem PIN hiện tại" onclick="togglePinVisibility('currentManagerPin',this)">👁</button></div></div><div class="field"><label>PIN mới</label><div class="pinInputWrap"><input id="newManagerPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" placeholder="Nhập đúng 4 số"><button type="button" class="pinEye" aria-label="Xem PIN mới" onclick="togglePinVisibility('newManagerPin',this)">👁</button></div></div><div class="field"><label>Nhập lại PIN mới</label><div class="pinInputWrap"><input id="confirmManagerPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" placeholder="Nhập lại 4 số"><button type="button" class="pinEye" aria-label="Xem PIN nhập lại" onclick="togglePinVisibility('confirmManagerPin',this)">👁</button></div></div><div class="field full"><div style="padding:11px 13px;border-radius:11px;background:#fff7ed;color:#9a3412;font-size:12px;font-weight:750;line-height:1.5">Sau khi đổi PIN, tất cả máy đang đăng nhập quản lý sẽ tự hết phiên và phải đăng nhập lại bằng PIN mới.</div></div><div class="field full"><div id="changePinStatus" style="min-height:22px;font-weight:850"></div><button id="changePinBtn" class="btn btnBlue" onclick="changeManagerPinUI()">🔐 Đổi PIN quản lý</button></div></div></div><div class="panel" style="margin-top:16px"><div class="panelHead"><h3>💾 Sao lưu và khôi phục dữ liệu</h3></div><div class="formCard"><div class="field full"><div style="padding:12px 14px;border-radius:12px;background:#eff6ff;color:#1e3a8a;line-height:1.55">Sao lưu toàn bộ sản phẩm, nhóm hàng, khách hàng, đơn hàng, khuyến mãi và cài đặt thành một file JSON. Nên sao lưu định kỳ và cất file ở nơi an toàn.</div></div><div class="field"><button type="button" class="btn btnBlue" style="width:100%" onclick="exportFullBackup()">⬇ Sao lưu dữ liệu</button></div><div class="field"><input id="backupRestoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreFullBackup(event)"><button type="button" class="btn btnOutline" style="width:100%" onclick="$('backupRestoreFile').click()">↩ Khôi phục dữ liệu</button></div><div class="field full"><div id="backupRestoreStatus" style="min-height:22px;font-weight:850;color:#475569"></div></div></div></div></section>
 </div></main></div><div class="mobileAdminBar" id="mobileAdminBar"><button class="backCustomer" onclick="showView('customer')">← Đặt hàng</button><select id="mobileSectionSelect" onchange="go(this.value)"><option value="overview">Tổng quan</option><option value="orders">Đơn hàng</option><option value="products">Sản phẩm</option><option value="categories">Nhóm hàng</option><option value="promos">Khuyến mãi</option><option value="customers">Quản lý khách hàng</option><option value="deleted-customers">Khách đã xóa</option><option value="pending">Chờ duyệt</option><option value="qr">QR Đặt hàng</option><option value="reports">Báo cáo</option><option value="settings">Cài đặt</option></select><button onclick="go('orders')">Đơn <span class="mobileBadge" id="mobileOrderCount">0</span></button><button onclick="go('pending')">Duyệt <span class="mobileBadge" id="mobilePendingCount">0</span></button></div></section>
 <div class="modal" id="registerModal"><div class="modalBox"><h2 id="registerTitle">Đăng ký thông tin đặt hàng</h2><p id="registerHint" style="color:#64748b">Chỉ cần đăng ký một lần. Hệ thống sẽ ghi nhớ cho các đơn sau.</p><div class="formCard"><div class="field"><label>Tên người mua hàng *</label><input id="regBuyer"></div><div class="field"><label>Số điện thoại đăng ký (định danh) *</label><input id="regPhone"><small id="regPhoneNote" style="display:block;color:#64748b;margin-top:5px">Số này dùng để liên kết tài khoản và không thể thay đổi sau khi đăng ký.</small></div><div class="field"><label>Số điện thoại liên hệ</label><input id="regContactPhone" placeholder="Có thể khác số định danh"><small style="display:block;color:#64748b;margin-top:5px">Dùng để gọi điện và giao hàng; không làm thay đổi tài khoản.</small></div><div class="field"><label>Số nhà, tên đường *</label><input id="regAddress" placeholder="Ví dụ: 25 Trần Hưng Đạo" oninput="renderRegMap()"></div><div id="regRetailAddressFields" class="field full"><label>Tỉnh/Thành phố, Phường/Xã *</label><input id="regProvince" type="hidden"><input id="regWard" type="hidden"><button id="regAreaBtn" class="addressPickerBtn placeholder" type="button" onclick="openAddressPicker('province')">Chọn Tỉnh/Thành phố, Phường/Xã</button><small style="display:block;color:#64748b;margin-top:6px">Bấm để tìm và chọn lần lượt như Shopee; hệ thống không nhận tên nhập sai.</small></div><div id="regRetailLocation" class="retailLocationBox"><b>📍 Vị trí giao hàng trên Google Maps</b><div class="retailLocationActions"><span id="regLocationStatus" class="retailLocationStatus">Google Maps sẽ tự cập nhật sau khi chọn đủ địa chỉ.</span></div><div id="regMapPreview"></div></div><div class="field full"><label>Tên cửa hàng/đại lý (có thể bỏ qua)</label><input id="regStore" placeholder="Bỏ trống nếu là khách lẻ" oninput="updateRetailLocationVisibility()"></div></div><div class="modalActions"><button class="btn btnOutline" id="registerCancelBtn" style="display:none" onclick="closeM('registerModal')">Hủy</button><button class="btn btnBlue" id="registerSaveBtn" onclick="saveRegistration()">Tiếp tục</button></div></div></div>
-<div class="modal" id="existingAccountModal"><div class="modalBox" style="max-width:450px;text-align:center"><img src="/ngoc-trai-icon-192.png" alt="Logo Ngọc Trai" style="width:82px;height:82px;border-radius:22px;margin:0 auto 12px;display:block"><h2 style="margin-bottom:8px">Bạn đã có tài khoản Ngọc Trai</h2><p style="color:#64748b;line-height:1.55;margin:0">Số điện thoại này đã được đăng ký. Bạn có thể mở ngay giao diện đặt hàng hoặc dùng một số điện thoại khác.</p><div class="modalActions" style="display:grid;grid-template-columns:1fr 1fr;margin-top:18px"><button class="btn btnOutline" type="button" onclick="registerWithDifferentPhone()">Đăng ký số khác</button><button class="btn btnBlue" type="button" onclick="openExistingAccount()">Mở đặt hàng</button></div></div></div>
+<div class="modal" id="existingAccountModal"><div class="modalBox" style="max-width:450px;text-align:center"><img src="/ngoc-trai-icon-192.png" alt="Logo Ngọc Trai" style="width:82px;height:82px;border-radius:22px;margin:0 auto 12px;display:block"><h2 style="margin-bottom:8px">Tài khoản đã tồn tại</h2><p style="color:#64748b;line-height:1.55;margin:0">Số điện thoại định danh này đã được sử dụng. Vui lòng liên hệ Nhà phân phối đang liên kết để nhận <b>mã phục hồi 4 số</b>.</p><div style="margin-top:16px"><input id="existingRecoveryCodeV27" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="Nhập mã phục hồi 4 số" style="width:100%;box-sizing:border-box;text-align:center;font-size:26px;letter-spacing:10px;font-weight:900;padding:13px;border:1px solid #cbd5e1;border-radius:12px"><div id="existingRecoveryStatusV27" style="min-height:20px;margin-top:8px;color:#64748b;font-size:13px"></div></div><div class="modalActions" style="display:grid;grid-template-columns:1fr 1fr;margin-top:14px"><button class="btn btnOutline" type="button" onclick="registerWithDifferentPhone()">Đăng ký số khác</button><button class="btn btnBlue" type="button" onclick="verifyExistingRecoveryV27()">Phục hồi dữ liệu</button></div></div></div>
 <div class="modal" id="deleteCustomerChoiceModal"><div class="modalBox" style="max-width:500px"><h2>🗑 Chọn cách xóa khách hàng</h2><div id="deleteCustomerChoiceInfo" style="padding:12px 14px;border-radius:12px;background:#f8fafc;color:#334155;line-height:1.55;margin-bottom:14px"></div><div style="display:grid;gap:10px"><button class="btn btnOutline" type="button" onclick="confirmTemporaryCustomerDelete()" style="text-align:left;padding:14px"><b>🕘 Xóa tạm thời</b><br><small style="color:#64748b">Lưu khách trong mục Khách đã xóa và có thể khôi phục lại.</small></button><button class="btn" type="button" onclick="confirmPermanentCustomerDelete()" style="text-align:left;padding:14px;background:#b91c1c;color:#fff"><b>🗑 Xóa vĩnh viễn</b><br><small style="color:#fee2e2">Không thể khôi phục; số điện thoại được phép đăng ký lại.</small></button></div><div class="modalActions"><button class="btn btnOutline" type="button" onclick="closeM('deleteCustomerChoiceModal')">Hủy</button></div></div></div>
 <div class="modal" id="addressPickerModal"><div class="modalBox" style="max-width:480px"><div style="display:flex;align-items:center;gap:8px"><button id="addressPickerBackBtn" class="btn btnOutline hidden" type="button" onclick="openAddressPicker('province')">←</button><h2 id="addressPickerTitle" style="margin:0 0 12px">Chọn địa chỉ</h2></div><input id="addressPickerSearch" class="addressPickerSearch" placeholder="Gõ để tìm..." oninput="renderAddressPickerOptions()"><div id="addressPickerList" class="addressPickerList"></div><div class="modalActions"><button class="btn btnOutline" type="button" onclick="closeM('addressPickerModal')">Đóng</button></div></div></div>
 <div class="modal" id="adminAddressPickerModal"><div class="modalBox" style="max-width:480px"><div style="display:flex;align-items:center;gap:8px"><button id="adminAddressPickerBackBtn" class="btn btnOutline hidden" type="button" onclick="openAdminAddressPicker(adminAddressPickerContext,'province')">←</button><h2 id="adminAddressPickerTitle" style="margin:0 0 12px">Chọn địa chỉ</h2></div><input id="adminAddressPickerSearch" class="addressPickerSearch" placeholder="Gõ để tìm..." oninput="renderAdminAddressPickerOptions()"><div id="adminAddressPickerList" class="addressPickerList"></div><div class="modalActions"><button class="btn btnOutline" type="button" onclick="closeM('adminAddressPickerModal')">Đóng</button></div></div></div>
@@ -779,118 +779,211 @@ function invoiceHTML(o,forExcel=false){
 
 .customerStatusMenu{position:relative;display:inline-block}.customerStatusMenu summary{list-style:none;border:0;background:#eef5ff;color:#1261d8;border-radius:8px;padding:8px 11px;font-weight:900;cursor:pointer;white-space:nowrap}.customerStatusMenu summary::-webkit-details-marker{display:none}.customerStatusMenu[open] summary{background:#1261d8;color:#fff}.customerStatusOptions{position:absolute;right:0;top:42px;z-index:2500;width:150px;background:#fff;border:1px solid var(--ln);border-radius:12px;padding:7px;box-shadow:0 16px 36px #0f172a2b}.customerStatusOptions button{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:8px;padding:10px;font-weight:850;color:#0f172a;margin:1px 0}.customerStatusOptions button:hover{background:#eef5ff;color:#1261d8}.customerStatusOptions .danger{color:#b91c1c}.customerStatusOptions .danger:hover{background:#fee2e2;color:#b91c1c}
 </style></head><body>${closePreview}<div class="invoice"><div class="head"><div class="brand"><b>${settings.distributor||'ĐIỆN MÁY 5S'}</b><div>Uy tín tạo niềm tin</div></div><div class="title"><h2>HÓA ĐƠN BÁN HÀNG</h2><div><b>Số:</b> ${o.id}</div><div><b>Ngày:</b> ${o.created}</div></div></div><div class="meta"><div><strong>Khách hàng:</strong> ${o.buyer}</div><div><strong>Số điện thoại:</strong> ${o.phone}</div><div><strong>Người nhận:</strong> ${o.receiver||o.buyer}</div><div><strong>Loại khách:</strong> ${o.tier==='vip'?'VIP':o.tier==='wholesale'?'Cửa hàng/Đại lý':'Khách lẻ'}</div><div style="grid-column:1/3"><strong>Địa chỉ:</strong> ${o.address}</div><div style="grid-column:1/3"><strong>Ghi chú:</strong> ${o.note||'Không có'}</div></div><table><thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>${rows}</tbody></table><div class="sum"><div><span>Tổng số lượng</span><b>${grouped.reduce((a,x)=>a+x.qty,0)}</b></div><div class="total"><span>TỔNG THANH TOÁN</span><span>${money(o.total)}</span></div></div><div class="sign"><div><b>Người mua hàng</b><span>(Ký và ghi rõ họ tên)</span></div><div><b>Người bán hàng</b><span>(Ký và ghi rõ họ tên)</span></div></div><div class="note">Cảm ơn quý khách đã đặt hàng tại 5S Smart Order!</div></div>
-<script id="customerShareV172Script">
-/* V172 - Khách lẻ: thay nút Kinh doanh bằng Chia sẻ.
-   Nếu khách được Đại lý giới thiệu, QR/link chia sẻ giữ đúng mã Đại lý đó. */
+<style id="smart-order-v27-recovery-css">
+#recoveryIssueModalV27 .recoveryCodeV27{
+  font-size:42px;font-weight:950;letter-spacing:12px;text-align:center;
+  background:#eff6ff;color:#0f4c81;border:2px dashed #60a5fa;border-radius:16px;
+  padding:16px 10px;margin:14px 0 8px;
+}
+#recoveryIssueModalV27 .recoveryTimerV27{font-weight:900;color:#b45309}
+#recoveryIssueModalV27 .recoveryInfoV27{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;
+  line-height:1.55;color:#334155;text-align:left
+}
+</style>
+
+<div class="modal" id="recoveryIssueModalV27">
+  <div class="modalBox" style="max-width:470px">
+    <h2>🔑 Mã phục hồi dữ liệu</h2>
+    <div id="recoveryIssueInfoV27" class="recoveryInfoV27"></div>
+    <div id="recoveryIssueCodeV27" class="recoveryCodeV27">----</div>
+    <div style="text-align:center">Hiệu lực còn: <span id="recoveryIssueTimerV27" class="recoveryTimerV27">10:00</span></div>    <div style="font-size:13px;color:#64748b;line-height:1.5;margin-top:10px">
+      Mã chỉ dùng <b>1 lần</b>, chỉ dành cho đúng tài khoản và đúng Nhà phân phối này.
+      Hết 10 phút mã tự vô hiệu.
+    </div>
+    <div class="modalActions">
+      <button class="btn btnOutline" type="button" onclick="copyRecoveryCodeV27()">Sao chép mã</button>
+      <button class="btn btnBlue" type="button" onclick="closeM('recoveryIssueModalV27')">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script id="smart-order-v27-recovery-js">
 (function(){
-  let customerShareLinkV172='';
+'use strict';
+const RECOVERY_TTL_V27=10*60*1000;
+let recoveryShownCodeV27='', recoveryShownExpiresV27=0, recoveryTimerHandleV27=null;
 
-  function referralDealerIdV172(){
-    if(curCustomer?.tier!=='retail') return '';
-    try{
-      const b=typeof referralBindingV161==='function'?referralBindingV161():null;
-      return String(curCustomer?.refDealerId||b?.dealerId||'').trim();
-    }catch(_){
-      return String(curCustomer?.refDealerId||'').trim();
-    }
-  }
-
-  function customerShareUrlV172(){
-    let link='';
-    try{link=typeof currentOrderLink==='function'?currentOrderLink():location.href}catch(_){link=location.href}
-    let url;
-    try{url=new URL(link,location.href)}catch(_){return link}
-    const dealerId=referralDealerIdV172();
-    if(dealerId){
-      url.searchParams.set('refDealer',dealerId);
-      url.searchParams.set('source','dealer-ref');
-      url.searchParams.set('tenant',typeof ORDER_TENANT_ID!=='undefined'?ORDER_TENANT_ID:'npp1');
-      try{url.searchParams.set('unit',typeof currentTenantUnitV159==='function'?currentTenantUnitV159():settings.distributor)}catch(_){}
-      url.searchParams.set('mode','order');
-      url.searchParams.set('view','customer');
-    }
-    return url.href;
-  }
-
-  window.openCustomerShareV172=function(){
-    const link=customerShareUrlV172();
-    customerShareLinkV172=link;
-    const qr=document.getElementById('shareQrPreview');
-    const box=document.getElementById('shareOrderLink');
-    const modal=document.getElementById('shareQrModal');
-    if(qr) qr.src='https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=12&data='+encodeURIComponent(link);
-    if(box) box.textContent=link;
-    const note=modal?.querySelector('.shareQrNote');
-    if(note) note.textContent=referralDealerIdV172()
-      ?'QR và đường link này giữ đúng Đại lý đã giới thiệu khách. Người nhận quét QR sẽ vào đúng nguồn chia sẻ đó.'
-      :'Khách quét QR hoặc bấm đường link sẽ mở đúng trang đặt hàng của nhà phân phối.';
-    if(modal) modal.style.display='flex';
-  };
-
+function bytesToB64V27(bytes){
+  let s=''; for(const b of bytes)s+=String.fromCharCode(b); return btoa(s);
+}
+function b64ToBytesV27(s){
+  const raw=atob(String(s||'')); const a=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i); return a;
+}
+function randomDigits4V27(){
   try{
-    const openShareQrBaseV172=window.openShareQr;
-    window.openShareQr=function(){
-      customerShareLinkV172='';
-      return typeof openShareQrBaseV172==='function'?openShareQrBaseV172.apply(this,arguments):undefined;
-    };
-  }catch(_){}
-
-  window.copyShareQrLink=async function(){
-    const link=customerShareLinkV172||customerShareUrlV172();
-    try{
-      await navigator.clipboard.writeText(link);
-      if(typeof toast==='function') toast('Đã sao chép link chia sẻ');
-    }catch(_){prompt('Sao chép đường link này:',link)}
-  };
-
-  window.shareQrToZalo=async function(){
-    const link=customerShareLinkV172||customerShareUrlV172();
-    const text='Mời bạn mở link để xem sản phẩm và đặt hàng tại '+(settings?.distributor||'nhà phân phối')+'.';
-    try{
-      if(navigator.share) await navigator.share({title:'Đặt hàng - '+(settings?.distributor||''),text,url:link});
-      else await window.copyShareQrLink();
-    }catch(e){
-      if(e?.name!=='AbortError') await window.copyShareQrLink();
-    }
-  };
-
-  window.downloadQR=async function(){
-    const src=document.getElementById('shareQrPreview')?.src||document.getElementById('qrRetailImg')?.src||'';
-    if(!src) return;
-    try{
-      const r=await fetch(src),b=await r.blob(),u=URL.createObjectURL(b),a=document.createElement('a');
-      a.href=u;a.download='QR-Chia-Se-Dat-Hang.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
-    }catch(_){window.open(src,'_blank')}
-  };
-
+    const a=new Uint16Array(1);
+    do{crypto.getRandomValues(a)}while(a[0]>=60000);
+    return String(a[0]%10000).padStart(4,'0');
+  }catch(_){
+    return String(Math.floor(Math.random()*10000)).padStart(4,'0');
+  }
+}
+function randomSaltV27(){
+  const a=new Uint8Array(16);
+  try{crypto.getRandomValues(a)}catch(_){for(let i=0;i<a.length;i++)a[i]=Math.floor(Math.random()*256)}
+  return bytesToB64V27(a);
+}
+async function recoveryProofV27(code,saltB64,phone,nppId){
+  const enc=new TextEncoder();
+  if(crypto?.subtle){
+    const key=await crypto.subtle.importKey('raw',enc.encode(String(code)),{name:'PBKDF2'},false,['deriveBits']);
+    const salt0=b64ToBytesV27(saltB64);
+    const extra=enc.encode('|'+String(phone||'')+'|'+String(nppId||''));
+    const salt=new Uint8Array(salt0.length+extra.length);salt.set(salt0);salt.set(extra,salt0.length);
+    const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt,iterations:60000},key,128);
+    return bytesToB64V27(new Uint8Array(bits));
+  }
+  // Chỉ là dự phòng cho trình duyệt quá cũ.
+  let x=2166136261, text=String(code)+'|'+saltB64+'|'+phone+'|'+nppId;
+  for(let i=0;i<text.length;i++){x^=text.charCodeAt(i);x=Math.imul(x,16777619)}
+  return String(x>>>0);
+}
+async function saveRecoveryCustomerOnlineV27(customer){
+  let controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
   try{
-    const quickBaseV172=updateCustomerQuickRowV161;
-    updateCustomerQuickRowV161=function(){
-      const r=quickBaseV172.apply(this,arguments);
-      const btn=document.getElementById('dealerBizQuickV161');
-      if(!btn) return r;
-      if(curCustomer?.tier==='retail'){
-        btn.hidden=false;
-        btn.classList.remove('biz');
-        btn.textContent='↗ Chia sẻ';
-        btn.onclick=window.openCustomerShareV172;
-        btn.title=referralDealerIdV172()?'Chia sẻ QR/link của Đại lý đã giới thiệu':'Chia sẻ QR/link đặt hàng';
-        btn.setAttribute('aria-label',btn.title);
-      }else{
-        btn.hidden=false;
-        btn.classList.add('biz');
-        btn.textContent='🤝 Kinh doanh';
-        btn.onclick=window.openDealerBusinessV161;
-        btn.title='Kinh doanh';
-        btn.setAttribute('aria-label','Kinh doanh');
-      }
-      return r;
-    };
-  }catch(_){}
+    const r=await fetch(CUSTOMERS_API,{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({action:'register',customer}),
+      signal:controller.signal
+    });
+    const j=await r.json().catch(()=>({}));
+    return !!(r.ok && (j.customer||j.ok!==false));
+  }catch(_){return false}
+  finally{clearTimeout(timer)}
+}
+function recoveryMapV27(c){
+  if(!c.recoveryByNppV27||typeof c.recoveryByNppV27!=='object')c.recoveryByNppV27={};
+  return c.recoveryByNppV27;
+}
+function recoveryNppNameV27(id){
+  try{return getNppDisplayName(id)}catch(_){return settings?.distributor||ORDER_CHILD_UNIT||'Nhà phân phối'}
+}
+function startRecoveryCountdownV27(expiresAt){
+  recoveryShownExpiresV27=Number(expiresAt)||0;
+  clearInterval(recoveryTimerHandleV27);
+  const tick=()=>{
+    const remain=Math.max(0,recoveryShownExpiresV27-Date.now());
+    const sec=Math.ceil(remain/1000), mm=String(Math.floor(sec/60)).padStart(2,'0'), ss=String(sec%60).padStart(2,'0');
+    const el=document.getElementById('recoveryIssueTimerV27'); if(el)el.textContent=mm+':'+ss;
+    if(remain<=0){clearInterval(recoveryTimerHandleV27); recoveryShownCodeV27=''; const code=document.getElementById('recoveryIssueCodeV27');if(code)code.textContent='HẾT HẠN'}
+  };
+  tick(); recoveryTimerHandleV27=setInterval(tick,1000);
+}
 
-  try{updateCustomerQuickRowV161()}catch(_){}
+window.generateRecoveryCodeV27=async function(customerId){
+  const c=customers.find(x=>String(x.id)===String(customerId));
+  if(!c)return toast('Không tìm thấy khách hàng');
+  const phone=String(c.phone||'').trim();
+  if(!phone)return toast('Khách hàng chưa có số điện thoại định danh');
+  const nppId=String(activeNppId||ORDER_TENANT_ID||'npp1');
+  const code=randomDigits4V27(),salt=randomSaltV27(),issuedAt=Date.now(),expiresAt=issuedAt+RECOVERY_TTL_V27;
+  const proof=await recoveryProofV27(code,salt,phone,nppId);
+  const map=recoveryMapV27(c), old=map[nppId] ? JSON.parse(JSON.stringify(map[nppId])) : null;
+  map[nppId]={salt,proof,issuedAt,expiresAt,used:false,usedAt:null};
+  try{persist()}catch(_){}
+  const saved=await saveRecoveryCustomerOnlineV27(c);
+  if(!saved){
+    if(old)map[nppId]=old;else delete map[nppId];
+    try{persist()}catch(_){}
+    return alert('Chưa cấp được mã vì chưa lưu được lên hệ thống. Vui lòng kiểm tra mạng và thử lại.');
+  }
+  try{if(typeof saveAdminOnline==='function')await saveAdminOnline()}catch(_){}
+  recoveryShownCodeV27=code;
+  document.getElementById('recoveryIssueInfoV27').innerHTML=
+    '<b>'+String(c.buyer||c.store||'Khách hàng')+'</b><br>SĐT định danh: <b>'+phone+'</b><br>Nhà phân phối: <b>'+recoveryNppNameV27(nppId)+'</b>';
+  document.getElementById('recoveryIssueCodeV27').textContent=code;
+  document.getElementById('recoveryIssueModalV27').style.display='flex';
+  startRecoveryCountdownV27(expiresAt);
+  toast('Đã cấp mã phục hồi 4 số trong 10 phút');
+};
+
+window.copyRecoveryCodeV27=async function(){
+  if(!recoveryShownCodeV27)return toast('Mã đã hết hạn');
+  try{await navigator.clipboard.writeText(recoveryShownCodeV27);toast('Đã sao chép mã phục hồi')}
+  catch(_){toast('Mã phục hồi: '+recoveryShownCodeV27)}
+};
+
+function recoveredNppKeyV27(phone){return 's5RecoveredNppsV27_'+String(phone||'').replace(/\D/g,'')}
+function markRecoveredNppV27(phone,nppId){
+  let list=[];
+  try{list=JSON.parse(localStorage.getItem(recoveredNppKeyV27(phone))||'[]')}catch(_){}
+  if(!Array.isArray(list))list=[];
+  if(!list.includes(nppId))list.push(nppId);
+  localStorage.setItem(recoveredNppKeyV27(phone),JSON.stringify(list));
+}
+function finishRecoveredAccountV27(remote,nppId){
+  const phone=String(remote.phone||'').trim();
+  let local=customers.find(c=>String(c.phone||'').trim()===phone);
+  if(local)Object.assign(local,remote);else{local={...remote};customers.push(local)}
+  curCustomer=local;
+  localStorage.setItem('s5phone',phone);
+  if(!linkedNpps.includes(nppId))linkedNpps.push(nppId);
+  activeNppId=nppId;
+  markRecoveredNppV27(phone,nppId);
+  try{persist()}catch(_){}
+  existingAccountMatch=null;
+  closeM('existingAccountModal');closeM('registerModal');
+  renderCustomer();try{renderAdmin()}catch(_){}
+  focusProducts();
+  toast('Đã phục hồi dữ liệu của '+recoveryNppNameV27(nppId));
+}
+
+window.verifyExistingRecoveryV27=async function(){
+  const remote=existingAccountMatch;
+  const status=document.getElementById('existingRecoveryStatusV27');
+  if(!remote){if(status)status.textContent='Không tìm thấy tài khoản cần phục hồi.';return}
+  const code=String(document.getElementById('existingRecoveryCodeV27')?.value||'').replace(/\D/g,'').slice(0,4);
+  if(code.length!==4){if(status){status.style.color='#b91c1c';status.textContent='Vui lòng nhập đủ 4 số.'}return}
+  const phone=String(remote.phone||'').trim();
+  const nppId=String(activeNppId||remote.ownerNppId||ORDER_TENANT_ID||'npp1');
+  const rec=remote?.recoveryByNppV27?.[nppId];
+  if(!rec){if(status){status.style.color='#b91c1c';status.textContent='Nhà phân phối này chưa cấp mã phục hồi. Vui lòng liên hệ NPP.'}return}
+  if(rec.used){if(status){status.style.color='#b91c1c';status.textContent='Mã này đã được sử dụng. Vui lòng xin mã mới.'}return}
+  if(Date.now()>Number(rec.expiresAt||0)){if(status){status.style.color='#b91c1c';status.textContent='Mã đã quá 10 phút và hết hiệu lực. Vui lòng xin mã mới.'}return}
+  if(status){status.style.color='#64748b';status.textContent='Đang xác minh mã...'}
+  const proof=await recoveryProofV27(code,rec.salt,phone,nppId);
+  if(proof!==rec.proof){if(status){status.style.color='#b91c1c';status.textContent='Mã phục hồi không đúng.'}return}
+  // Đánh dấu dùng một lần trước khi mở tài khoản.
+  rec.used=true;rec.usedAt=Date.now();
+  const saved=await saveRecoveryCustomerOnlineV27(remote);
+  if(!saved){
+    rec.used=false;rec.usedAt=null;
+    if(status){status.style.color='#b91c1c';status.textContent='Chưa xác nhận được với hệ thống. Kiểm tra mạng rồi thử lại.'}
+    return
+  }
+  finishRecoveredAccountV27(remote,nppId);
+};
+
+// Không cho luồng cũ mở thẳng tài khoản, luôn yêu cầu mã.
+window.openExistingAccount=function(){
+  const input=document.getElementById('existingRecoveryCodeV27');
+  if(input)input.focus();
+  const status=document.getElementById('existingRecoveryStatusV27');
+  if(status){status.style.color='#64748b';status.textContent='Vui lòng nhập mã phục hồi 4 số do NPP cấp.'}
+};
+
+document.addEventListener('keydown',function(e){
+  const modal=document.getElementById('existingAccountModal');
+  if(e.key==='Enter'&&modal?.style.display==='flex'&&document.activeElement?.id==='existingRecoveryCodeV27'){
+    e.preventDefault();verifyExistingRecoveryV27()
+  }
+});
 })();
 </script>
+<!-- SMART ORDER V27 • RECOVERY CODE 4 DIGITS • 10 MINUTES • ONE TIME -->
 
 </body></html>`;
 }
@@ -910,7 +1003,7 @@ function sales(id){return orders.filter(o=>o.customerId===id).reduce((s,o)=>s+o.
 function appStatusOf(c){let signedPhone=localStorage.getItem('s5phone');if(signedPhone&&c.phone===signedPhone)return'has';return c.appStatus|| (c.addedByNpp?'no':'has')}
 function appStatusName(c){let st=appStatusOf(c);return st==='has'?'Có App':st==='wait'?'Chờ App':'Chưa App'}
 function sendAppLink(id){let c=customers.find(x=>x.id===id);if(!c)return;c.appStatus='wait';persist();renderCustomers();toast('Đã chuyển sang Chờ App – sẵn sàng gửi link cho '+(c.store||c.buyer))}
-function customerSortTime(c){let idTime=Number(String(c.id||'').match(/\d{10,}/)?.[0]||0);return Number(c.customerSortAt||c.approvedAt||c.createdAt||idTime||0)}function renderCustomers(){let f=$('customerTierFilter').value,sf=$('customerStatusFilter')?.value||'all',q=($('customerSearch').value||'').toLowerCase();let list=customers.filter(c=>c.status!=='pending'&&c.status!=='deleted'&&(f==='all'||c.tier===f)&&(sf==='all'||(sf==='visible'?c.active!==false:c.active===false))&&((c.buyer||'').toLowerCase().includes(q)||(c.phone||'').includes(q)||(c.contactPhone||'').includes(q)||(c.store||'').toLowerCase().includes(q))).sort((a,b)=>customerSortTime(b)-customerSortTime(a));$('customerRows').innerHTML=list.map(c=>`<tr style="${c.active===false?'opacity:.62;background:#f8fafc':''}"><td><b>${c.buyer}</b><br><small>${c.receiver}</small></td><td><b>${c.phone}</b><br><small>${c.contactPhone?'Liên hệ: '+c.contactPhone:'Chưa có số liên hệ mới'}</small></td><td>${c.address}${c.tier==='retail'&&c.mapUrl?`<br><a class="mapLink" href="${c.mapUrl}" target="_blank" rel="noopener">🗺 Bản đồ</a>`:''}</td><td>${c.store||'-'}</td><td><b>${appStatusName(c)}</b></td><td>${money(sales(c.id))}</td><td><select class="filter" onchange="changeTier('${c.id}',this.value)"><option value="retail" ${c.tier==='retail'?'selected':''}>Khách lẻ</option><option value="wholesale" ${c.tier==='wholesale'?'selected':''}>Cửa hàng/Đại lý</option><option value="vip" ${c.tier==='vip'?'selected':''}>VIP</option></select></td><td class="actions"><details class="customerStatusMenu"><summary>${c.active===false?'Ẩn':'Hiện'} ▼</summary><div class="customerStatusOptions"><button onclick="setCustomerVisibility('${c.id}',true);this.closest('details').removeAttribute('open')">👁 Hiện</button><button onclick="setCustomerVisibility('${c.id}',false);this.closest('details').removeAttribute('open')">🙈 Ẩn</button><button onclick="openEditCustomer('${c.id}');this.closest('details').removeAttribute('open')">✏ Sửa</button><button class="danger" onclick="deleteCustomer('${c.id}');this.closest('details').removeAttribute('open')">🗑 Xóa</button></div></details></td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:#64748b;padding:22px">Không tìm thấy khách hàng phù hợp</td></tr>'}
+function customerSortTime(c){let idTime=Number(String(c.id||'').match(/\d{10,}/)?.[0]||0);return Number(c.customerSortAt||c.approvedAt||c.createdAt||idTime||0)}function renderCustomers(){let f=$('customerTierFilter').value,sf=$('customerStatusFilter')?.value||'all',q=($('customerSearch').value||'').toLowerCase();let list=customers.filter(c=>c.status!=='pending'&&c.status!=='deleted'&&(f==='all'||c.tier===f)&&(sf==='all'||(sf==='visible'?c.active!==false:c.active===false))&&((c.buyer||'').toLowerCase().includes(q)||(c.phone||'').includes(q)||(c.contactPhone||'').includes(q)||(c.store||'').toLowerCase().includes(q))).sort((a,b)=>customerSortTime(b)-customerSortTime(a));$('customerRows').innerHTML=list.map(c=>`<tr style="${c.active===false?'opacity:.62;background:#f8fafc':''}"><td><b>${c.buyer}</b><br><small>${c.receiver}</small></td><td><b>${c.phone}</b><br><small>${c.contactPhone?'Liên hệ: '+c.contactPhone:'Chưa có số liên hệ mới'}</small></td><td>${c.address}${c.tier==='retail'&&c.mapUrl?`<br><a class="mapLink" href="${c.mapUrl}" target="_blank" rel="noopener">🗺 Bản đồ</a>`:''}</td><td>${c.store||'-'}</td><td><b>${appStatusName(c)}</b></td><td>${money(sales(c.id))}</td><td><select class="filter" onchange="changeTier('${c.id}',this.value)"><option value="retail" ${c.tier==='retail'?'selected':''}>Khách lẻ</option><option value="wholesale" ${c.tier==='wholesale'?'selected':''}>Cửa hàng/Đại lý</option><option value="vip" ${c.tier==='vip'?'selected':''}>VIP</option></select></td><td class="actions"><details class="customerStatusMenu"><summary>${c.active===false?'Ẩn':'Hiện'} ▼</summary><div class="customerStatusOptions"><button onclick="setCustomerVisibility('${c.id}',true);this.closest('details').removeAttribute('open')">👁 Hiện</button><button onclick="setCustomerVisibility('${c.id}',false);this.closest('details').removeAttribute('open')">🙈 Ẩn</button><button onclick="generateRecoveryCodeV27('${c.id}');this.closest('details').removeAttribute('open')">🔑 Mã phục hồi</button><button onclick="openEditCustomer('${c.id}');this.closest('details').removeAttribute('open')">✏ Sửa</button><button class="danger" onclick="deleteCustomer('${c.id}');this.closest('details').removeAttribute('open')">🗑 Xóa</button></div></details></td></tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:#64748b;padding:22px">Không tìm thấy khách hàng phù hợp</td></tr>'}
 async function changeTier(id,t){let c=customers.find(x=>x.id===id);if(!c||c.tier===t)return;let oldTier=c.tier,oldStatus=c.status;c.tier=t;c.status='approved';if(curCustomer?.id===id)curCustomer=c;persist();clearTimeout(adminSyncTimer);renderAdmin();renderCustomer();let ok=await saveAdminOnline();if(ok)return toast('Đã chuyển sang '+tierName(t));c.tier=oldTier;c.status=oldStatus;if(curCustomer?.id===id)curCustomer=c;persist();renderAdmin();renderCustomer();toast('Chưa lưu được loại khách, vui lòng thử lại')}
 async function setCustomerVisibility(id,visible){let c=customers.find(x=>x.id===id);if(!c)return;c.active=visible;let phone=String(c.phone||'').trim(),appPhone=String(localStorage.getItem('s5phone')||'').trim();persist();clearTimeout(adminSyncTimer);let saving=saveAdminOnline();if(phone&&phone===appPhone){curCustomer=c;cart={};cartDetails={};renderCustomer()}renderAdmin();let ok=await saving;toast(ok?(visible?'Đã mở lại tài khoản khách hàng':'Đã ẩn khách; ứng dụng khách sẽ báo Hệ thống đang nâng cấp'):'Chưa lưu được online, vui lòng thử lại')}
 function toggleCustomer(id){let c=customers.find(x=>x.id===id);if(!c)return;setCustomerVisibility(id,c.active===false)}
@@ -1503,8 +1596,7 @@ const showSectionV160ForV161=showSection;
 showSection=function(id,b){ensureReferralAdminSectionV161();let result=showSectionV160ForV161(id,b);if(id==='referral-orders'&&$('pageTitle'))$('pageTitle').textContent='Đơn khách giới thiệu';return result};
 const renderOverviewV160ForV161=renderOverview;
 renderOverview=function(){renderOverviewV160ForV161();let grid=$('overviewCards');if(grid&&!grid.querySelector('[data-referral-card-v161]')){let card=document.createElement('div');card.className='dashCard';card.dataset.referralCardV161='1';card.onclick=()=>go('referral-orders');card.innerHTML='<div class="dashIcon">🤝</div><div><h3>Đơn khách giới thiệu</h3><p>Đơn từ QR đại lý và hoa hồng giao thành công.</p></div>';let first=grid.children[1]||null;grid.insertBefore(card,first)}};
-const renderAdminV160ForV161=renderAdmin;
-renderAdmin=function(){ensureReferralAdminSectionV161();syncDealerReferralAggregatesV161();let result=renderAdminV160ForV161();renderReferralAdminV161();return result};
+const renderAdminV160ForV161=renderAdmin;renderAdmin=function(){ensureReferralAdminSectionV161();syncDealerReferralAggregatesV161();let result=renderAdminV160ForV161();renderReferralAdminV161();return result};
 
 /* Khi tải hồ sơ online, giữ khóa nguồn giới thiệu đã gắn ở thiết bị và làm mới số liệu đại lý. */
 const refreshCurrentCustomerOnlineV160ForV161=refreshCurrentCustomerOnline;

@@ -797,7 +797,8 @@ function invoiceHTML(o,forExcel=false){
     <h2>🔑 Mã phục hồi dữ liệu</h2>
     <div id="recoveryIssueInfoV27" class="recoveryInfoV27"></div>
     <div id="recoveryIssueCodeV27" class="recoveryCodeV27">----</div>
-    <div style="text-align:center">Hiệu lực còn: <span id="recoveryIssueTimerV27" class="recoveryTimerV27">10:00</span></div>    <div style="font-size:13px;color:#64748b;line-height:1.5;margin-top:10px">
+    <div style="text-align:center">Hiệu lực còn: <span id="recoveryIssueTimerV27" class="recoveryTimerV27">10:00</span></div>
+    <div style="font-size:13px;color:#64748b;line-height:1.5;margin-top:10px">
       Mã chỉ dùng <b>1 lần</b>, chỉ dành cho đúng tài khoản và đúng Nhà phân phối này.
       Hết 10 phút mã tự vô hiệu.
     </div>
@@ -1596,7 +1597,8 @@ const showSectionV160ForV161=showSection;
 showSection=function(id,b){ensureReferralAdminSectionV161();let result=showSectionV160ForV161(id,b);if(id==='referral-orders'&&$('pageTitle'))$('pageTitle').textContent='Đơn khách giới thiệu';return result};
 const renderOverviewV160ForV161=renderOverview;
 renderOverview=function(){renderOverviewV160ForV161();let grid=$('overviewCards');if(grid&&!grid.querySelector('[data-referral-card-v161]')){let card=document.createElement('div');card.className='dashCard';card.dataset.referralCardV161='1';card.onclick=()=>go('referral-orders');card.innerHTML='<div class="dashIcon">🤝</div><div><h3>Đơn khách giới thiệu</h3><p>Đơn từ QR đại lý và hoa hồng giao thành công.</p></div>';let first=grid.children[1]||null;grid.insertBefore(card,first)}};
-const renderAdminV160ForV161=renderAdmin;renderAdmin=function(){ensureReferralAdminSectionV161();syncDealerReferralAggregatesV161();let result=renderAdminV160ForV161();renderReferralAdminV161();return result};
+const renderAdminV160ForV161=renderAdmin;
+renderAdmin=function(){ensureReferralAdminSectionV161();syncDealerReferralAggregatesV161();let result=renderAdminV160ForV161();renderReferralAdminV161();return result};
 
 /* Khi tải hồ sơ online, giữ khóa nguồn giới thiệu đã gắn ở thiết bị và làm mới số liệu đại lý. */
 const refreshCurrentCustomerOnlineV160ForV161=refreshCurrentCustomerOnline;

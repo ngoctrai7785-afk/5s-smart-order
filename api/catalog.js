@@ -1,9 +1,9 @@
-const BASE='https://smart-order-ngoc-trai.ngoctrai7785.chatgpt.site';
+const BASE='https://upojgdqkkjwtbrzljffo.supabase.co/functions/v1/smart-order-api';
 
 export default async function handler(req,res){
   try{
     const q=req.url.includes('?')?req.url.slice(req.url.indexOf('?')):'';
-    const target=BASE+'/api/catalog'+q;
+    const target=BASE+'/catalog'+q;
     const headers={};
     for(const k of ['content-type','authorization','x-order-tenant','cache-control']){
       if(req.headers[k]) headers[k]=req.headers[k];
@@ -20,6 +20,6 @@ export default async function handler(req,res){
     res.setHeader('cache-control',cc||'no-store');
     res.status(r.status).send(buf);
   }catch(e){
-    res.status(502).json({error:'Không kết nối được app Order cũ'});
+    res.status(502).json({error:'Không kết nối được Supabase Order'});
   }
 }
